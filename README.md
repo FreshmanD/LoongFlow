@@ -296,7 +296,7 @@ Welcome to join our community on
 
 | [Discord](https://discord.gg/YSfdrC8HJh)                                | Wechat                                                                 |
 |-------------------------------------------------------------------------|------------------------------------------------------------------------|
-| <img src="./assets/images/discord_invite.png" width="200" height="200"> | <img src="./assets/images/wechat_invite.png" width="200" height="200"> |
+| <img src="./assets/images/discord_invite.png" width="200" height="200"> | <img src="./assets/images/wechat_invite.jpg" width="200" height="200"> |
 
 ## 📜 License
 

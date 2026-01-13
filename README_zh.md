@@ -286,9 +286,9 @@ For more details, please refer to [ReActAgent](./src/evolux/react)
 
 欢迎加入我们的社区进行讨论：
 
-| [Discord](https://discord.gg/YSfdrC8HJh)       | Wechat                                  |
-|------------------------------------------------|-----------------------------------------|
-| <img src="./assets/images/discord_invite.png" width="200" height="200"> | <img src="./assets/images/wechat_invite.png" width="200" height="200"> |
+| [Discord](https://discord.gg/YSfdrC8HJh)       | Wechat                                                                 |
+|------------------------------------------------|------------------------------------------------------------------------|
+| <img src="./assets/images/discord_invite.png" width="200" height="200"> | <img src="./assets/images/wechat_invite.jpg" width="200" height="200"> |
 
 ## 📜 许可
 
