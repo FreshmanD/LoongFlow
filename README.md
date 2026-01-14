@@ -6,9 +6,9 @@
 
 _Set Creativity Free! LoongFlow turns your expertise into professional AI productivity._
 
-LoongFlow is an open-source **expert-grade Agent development framework** designed for **long-horizon, complex reasoning tasks**.
+LoongFlow is an open-source **expert-grade Agent development framework**.
 
-Enable Agents to think and learn through the PES paradigm, and the capacity to accumulate experience through iteration to achieve expert-level breakthroughs.
+Enable Agents to think and learn through the PES paradigm, and accumulate experience through iteration.
 
 <p align="center">
     <a href="https://github.com/baidu-baige/LoongFlow/stargazers"><img src="https://img.shields.io/github/stars/baidu-baige/LoongFlow?style=social" alt="GitHub stars"></a>
@@ -97,31 +97,19 @@ Enable Agents to think and learn through the PES paradigm, and the capacity to a
 ## ✨ Why LoongFlow?
 
 ---
-<table> <tr> <td width="33%">
-Structured Thinking
 
-Agents don’t just generate outputs — they plan, execute, and reflect.
-LoongFlow introduces an explicit thinking structure for long-horizon reasoning.
+**An expert-grade Agent framework that thinks and learns. It empowers Agents to think like scientists, helping developers rapidly transform their professional expertise into expert-level Agents.**
 
-</td> <td width="33%">
-Continuous Learning
+<p align="center">
+<img src="./assets/images/loongflow_fr_v1.jpg" alt="LoongFlow Framework" width="80%"/>
+</p>
 
-Agents don’t restart from scratch.
-Experience is summarized, abstracted, and reused, enabling steady improvement without retraining.
-
-</td> <td width="33%">
-Expert-Grade Performance
-
-Designed for the hardest problems.
-Validated on mathematical discovery and machine learning research benchmarks.
-
-</td> </tr> </table>
+- **Intelligent Thinking**: 
+Innovative PES (Planning-Execution-Summary) Paradigm. LoongFlow empowers Agents with structured thinking to tackle long-range complex reasoning challenges. This enables Agents to iterate through high-difficulty tasks with the rigorous mindset of a human scientist.
+- **Continuous Learning**: 
+Innovative Multi-Structure Fusion Memory. By actively generating model reasoning contexts, LoongFlow allows Agents to continuously synthesize experience during task iterations. This results in a "run-and-improve" mechanism, achieving lightweight learning and evolution without heavy retraining.
 
 We believe that the key to designing an expert-level Agent capable of solving complex problems lies in the **Agent’s thinking paradigm**. The thinking paradigm determines the complexity of problems an Agent can handle and sets the ceiling for its effectiveness. LoongFlow is built specifically for complex tasks requiring long-range reasoning, helping developers rapidly build Agents with domain-expert performance.
-
-### LoongFlow vs Traditional Agent Approaches:
-
-<table> <tr> <th align="left">Aspect</th> <th align="left">Prompt / Tool-Based Agents</th> <th align="left">OpenEvolve-Style Evolution</th> <th align="left">LoongFlow</th> </tr> <tr> <td><strong>Core Loop</strong></td> <td>Generate → Retry</td> <td>Mutate → Select</td> <td>Plan → Execute → Summary</td> </tr> <tr> <td><strong>Reasoning Depth</strong></td> <td>Shallow</td> <td>Limited</td> <td>Long-horizon, structured</td> </tr> <tr> <td><strong>Learning from Failure</strong></td> <td>❌</td> <td>Partial</td> <td>✅ Explicit reflection</td> </tr> <tr> <td><strong>Experience Reuse</strong></td> <td>❌</td> <td>❌</td> <td>✅ Structured memory</td> </tr> <tr> <td><strong>Stability</strong></td> <td>Fragile</td> <td>Often unstable</td> <td>Stable convergence</td> </tr> <tr> <td><strong>Best Use Case</strong></td> <td>Simple automation</td> <td>Search-heavy tasks</td> <td>Expert-level problem solving</td> </tr> </table>
 
 ### Proven Achievements
 
@@ -133,6 +121,10 @@ We believe that the key to designing an expert-level Agent capable of solving co
 | **MLE-bench (Kaggle Challenges)** | Validated across 40 Kaggle competitions, securing 22 Gold Medals. | [Stanford-Covid-Vaccine](./agents/ml_evolve/examples/mlebench/competitions/hard/stanford-covid-vaccine) |
 
 </div>
+
+### LoongFlow vs Traditional Agent Approaches:
+
+<table> <tr> <th align="left">Aspect</th> <th align="left">Prompt / Tool-Based Agents</th> <th align="left">OpenEvolve-Style Evolution</th> <th align="left">LoongFlow</th> </tr> <tr> <td><strong>Core Loop</strong></td> <td>Generate → Retry</td> <td>Mutate → Select</td> <td>Plan → Execute → Summary</td> </tr> <tr> <td><strong>Reasoning Depth</strong></td> <td>Shallow</td> <td>Limited</td> <td>Long-horizon, structured</td> </tr> <tr> <td><strong>Learning from Failure</strong></td> <td>❌</td> <td>Partial</td> <td>✅ Explicit reflection</td> </tr> <tr> <td><strong>Experience Reuse</strong></td> <td>❌</td> <td>❌</td> <td>✅ Structured memory</td> </tr> <tr> <td><strong>Stability</strong></td> <td>Fragile</td> <td>Often unstable</td> <td>Stable convergence</td> </tr> <tr> <td><strong>Best Use Case</strong></td> <td>Simple automation</td> <td>Search-heavy tasks</td> <td>Expert-level problem solving</td> </tr> </table>
 
 
 ## Quick Start
@@ -217,28 +209,41 @@ tail -f ./agents/ml_evolve/examples/ml_example/agent.log
 
 ## How LoongFlow Works
 
+LoongFlow is designed around a simple idea:
+
+> Expert-level performance emerges not from better mutations, but from better thinking, reflection, and accumulated experience.
+
+To achieve this, LoongFlow organizes agent behavior into a thinking–learning–evolving loop.
+
 ---
 ### From Evolutionary Agents to Thinking Agents
 
-Frameworks such as **OpenEvolve** and **AlphaEvolve** introduced an important idea:  
-agents can improve through iteration, evaluation, and selection.
+From Evolutionary Agents to Thinking Agents
 
-These evolutionary agent systems represent a meaningful step beyond static prompting.  
-However, in real-world expert tasks, purely evolutionary loops often encounter limitations:
+Frameworks such as **OpenEvolve** and **AlphaEvolve** demonstrated that agents can improve through iteration, evaluation, and selection.
 
-- Exploration is often blind or weakly guided  
-- Long-horizon reasoning easily breaks  
-- Experience is difficult to generalize across tasks  
-- Agents frequently converge to local optima  
+This marked a clear step beyond static prompting.
 
-LoongFlow builds upon these ideas, but shifts the core abstraction.
-Instead of centering on mutation and selection, LoongFlow standardizes **how agents think, reflect, and learn**, enabling expert-level performance on complex problems.
+However, in real-world expert tasks, purely evolutionary loops often struggle because:
+
+- Exploration is blind or weakly guided
+- Long-horizon reasoning breaks easily 
+- Experience remains task-specific 
+- Agents converge prematurely to local optima
+
+The core issue is not evolution itself, but **the lack of a structured thinking process**.
+
+LoongFlow addresses this by shifting the abstraction:
+
+from _evolving outputs_ to **standardizing how agents think, act, and learn**.
 
 ---
 
 ### PES Thinking Paradigm
 
-At the core of LoongFlow is the **PES thinking paradigm**, inspired by how human experts conduct research: Each agent iteration is explicitly structured into PES stages.
+At the core of LoongFlow is the **PES (Plan–Execute–Summary) thinking paradigm**, inspired by how human experts conduct research: 
+
+Each agent iteration follows the same explicit structure:
 
 <table> <tr> <td width="33%">
 Plan
@@ -253,7 +258,8 @@ Plan
 </td> <td width="33%">
 Execute
 
-- Execute with structure, verification, and correction  
+- Perform structured experimentation
+- Verify intermediate results
 - Avoid low-value or redundant trials  
 
 > Execution becomes controlled experimentation, not guesswork.
@@ -272,29 +278,21 @@ Summary
 <img src="./assets/images/pes-flow.jpg" alt="LoongFlow Framework" width="80%"/>
 </p>
 
+PES transforms evolution from a mutation-driven process into a **reasoning-guided improvement loop**.
+
+--- 
+
 ### Learning & Evolutionary Memory
 
-Thinking alone is not enough. Agents must also **remember, generalize, and escape local optima**.
+Thinking alone is not enough. To improve over time, agents must **remember, generalize, and escape local optima**.
 
-LoongFlow introduces a hybrid evolutionary memory system:
+LoongFlow integrates PES with a hybrid evolutionary memory system:
 
-- **Multi-Island + MAP-Elites** for diversity preservation  
-- **Adaptive Boltzmann selection** for exploration–exploitation balance  
-- **Global evolutionary tree memory** for long-range context retrieval  
+- Multi-Island + MAP-Elites to preserve diversity 
+- Adaptive Boltzmann selection to balance exploration and exploitation 
+- Global evolutionary tree memory for long-range experience retrieval
 
-This enables **jump-style reasoning**, rather than incremental local search.
-
-### How LoongFlow Compares
-
-| Dimension | Tool-Based Agent Frameworks | Evolutionary Agents (e.g. OpenEvolve, AlphaEvolve) | LoongFlow |
-|---------|----------------------------|---------------------------------------------------|-----------|
-| Core abstraction | Tool chains | Mutation & selection | PES thinking paradigm |
-| Long-horizon reasoning | ❌ | ⚠️ | ✅ |
-| Structured reflection | ❌ | ❌ | ✅ |
-| Learning from failure | ❌ | Limited | ✅ |
-| Expert knowledge reuse | ❌ | ❌ | ✅ |
-| Escaping local optima | ❌ | Partial | ✅ |
-
+This allows agents to perform **jump-style reasoning** — leveraging past discoveries to move beyond incremental local search.
 
 
 ## LoongFlow Examples
