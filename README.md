@@ -4,7 +4,7 @@
 
 <h2 align="center">LoongFlow: A Thinking & Learning Framework for Expert-Grade AI Agents.</h2>
 
-_Set Creativity Free! LoongFlow turns your expertise into professional AI productivity._
+_Set creativity free! LoongFlow: effortlessly transform your expert experience into professional AI productivity._
 
 LoongFlow is an open-source **expert-grade Agent development framework** designed for **long-horizon, complex reasoning tasks**.
 
