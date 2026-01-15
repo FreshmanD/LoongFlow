@@ -2,13 +2,16 @@
 
 <div align="center">
 
-<h2 align="center">LoongFlow: An Expert-Grade Agent Framework That Thinks and Learns.</h2>
+<h2 align="center">LoongFlow: A Thinking & Learning Framework for Expert-Grade AI Agents.</h2>
 
-_Set creativity free! LoongFlow: effortlessly transform your expert experience into professional AI productivity._
+_Set Creativity Free! LoongFlow turns your expertise into professional AI productivity._
 
-Enable Agents to think and learn through the PES paradigm, equipping them with long-range complex reasoning capabilities, the ability to bypass local optima, and the capacity to accumulate experience through iteration to achieve expert-level breakthroughs.
+LoongFlow is an open-source **expert-grade Agent development framework**.
+
+Enable Agents to think and learn through the PES paradigm, and accumulate experience through iteration.
 
 <p align="center">
+    <a href="https://github.com/baidu-baige/LoongFlow/stargazers"><img src="https://img.shields.io/github/stars/baidu-baige/LoongFlow?style=social" alt="GitHub stars"></a>
     <a href="https://arxiv.org/abs/2512.24077">
         <img
             src="https://img.shields.io/badge/cs.AI-2512.24077-B31C1C?logo=arxiv&logoColor=B31C1C"
@@ -21,12 +24,6 @@ Enable Agents to think and learn through the PES paradigm, equipping them with l
             alt="pypi"
         />
     </a>
-    <a href="https://pypi.org/project/evolux/">
-        <img
-            src="https://img.shields.io/badge/version-v1.0.0-blue"
-            alt="pypi"
-        />
-    </a>
     <a href="./LICENSE">
         <img
             src="https://img.shields.io/badge/license-Apache--2.0-green"
@@ -35,8 +32,7 @@ Enable Agents to think and learn through the PES paradigm, equipping them with l
     </a>       
 </p>
 
-
-[**General-Evolve**](./agents/general_evolve) • [**ML-Evolve**](./agents/ml_evolve) • [**EvolveAgent**](./src/evolux/evolve) • [**ReactAgent**](./src/evolux/react) • [**AgentSDK**](./src/agentsdk)
+[🚀 **Quick Start**](#quick-start) • [**Examples**](#loongflow-examples) • [**General-Evolve**](./agents/general_evolve) • [**ML-Evolve**](./agents/ml_evolve) • [**Discussions**](https://github.com/baidu-baige/LoongFlow/discussions)
 
 </div>
 
@@ -97,11 +93,10 @@ Enable Agents to think and learn through the PES paradigm, equipping them with l
 
 **LoongFlow**: Inspired by Wang Yangming's "Enlightenment at Longchang".LoongFlow is dedicated to breaking the barrier between Knowing and Doing. We enable wisdom to awaken through the unity of knowledge and action, ensuring that every drop of professional expertise is transformed into powerful **AI productivity**.
 
-## 📰 News
-
-- **[2025-12]** 🎉 LoongFlow v1 has been released now!
 
 ## ✨ Why LoongFlow?
+
+---
 
 **An expert-grade Agent framework that thinks and learns. It empowers Agents to think like scientists, helping developers rapidly transform their professional expertise into expert-level Agents.**
 
@@ -109,23 +104,32 @@ Enable Agents to think and learn through the PES paradigm, equipping them with l
 <img src="./assets/images/loongflow_fr_v1.jpg" alt="LoongFlow Framework" width="80%"/>
 </p>
 
-**Intelligent Thinking**: 
+- **Intelligent Thinking**: 
 Innovative PES (Planning-Execution-Summary) Paradigm. LoongFlow empowers Agents with structured thinking to tackle long-range complex reasoning challenges. This enables Agents to iterate through high-difficulty tasks with the rigorous mindset of a human scientist.
-
-**Continuous Learning**: 
+- **Continuous Learning**: 
 Innovative Multi-Structure Fusion Memory. By actively generating model reasoning contexts, LoongFlow allows Agents to continuously synthesize experience during task iterations. This results in a "run-and-improve" mechanism, achieving lightweight learning and evolution without heavy retraining.
-
-**Expert-Grade Performance**: 
-Validated in General Evolution and Machine Learning—the two most demanding domains.
-- Mathematical Challenges (Tao’s & AlphaEvolve sets): Outperformed the best human results on 11 problems and surpassed AlphaEvolve’s results on 7 problems, achieving the latest SOTA.
-- MLE-bench (Kaggle Challenges): Validated across 40 Kaggle competitions, securing 22 Gold Medals.
-- Efficiency Gains: Achieved an approximate 60% increase in comprehensive evolutionary efficiency compared to traditional methods.
-
 
 We believe that the key to designing an expert-level Agent capable of solving complex problems lies in the **Agent’s thinking paradigm**. The thinking paradigm determines the complexity of problems an Agent can handle and sets the ceiling for its effectiveness. LoongFlow is built specifically for complex tasks requiring long-range reasoning, helping developers rapidly build Agents with domain-expert performance.
 
+### Proven Achievements
 
-## 🚀 Quick Start
+<div align="center">
+
+| **Domain** | **Achievement** | **Example**                                                                                             |
+|---------------|-------------------|---------------------------------------------------------------------------------------------------------|
+| **Mathematical Challenges (Tao’s & AlphaEvolve sets)** | Outperformed the best human results on 11 problems and surpassed AlphaEvolve’s results on 7 problems, achieving the latest SOTA. | [Circle Packing](./agents/general_evolve/examples/packing_circle_in_unit_square)                        |
+| **MLE-bench (Kaggle Challenges)** | Validated across 40 Kaggle competitions, securing 22 Gold Medals. | [Stanford-Covid-Vaccine](./agents/ml_evolve/examples/mlebench/competitions/hard/stanford-covid-vaccine) |
+
+</div>
+
+### LoongFlow vs Traditional Agent Approaches:
+
+<table> <tr> <th align="left">Aspect</th> <th align="left">Prompt / Tool-Based Agents</th> <th align="left">OpenEvolve-Style Evolution</th> <th align="left">LoongFlow</th> </tr> <tr> <td><strong>Core Loop</strong></td> <td>Generate → Retry</td> <td>Mutate → Select</td> <td>Plan → Execute → Summary</td> </tr> <tr> <td><strong>Reasoning Depth</strong></td> <td>Shallow</td> <td>Limited</td> <td>Long-horizon, structured</td> </tr> <tr> <td><strong>Learning from Failure</strong></td> <td>❌</td> <td>Partial</td> <td>✅ Explicit reflection</td> </tr> <tr> <td><strong>Experience Reuse</strong></td> <td>❌</td> <td>❌</td> <td>✅ Structured memory</td> </tr> <tr> <td><strong>Stability</strong></td> <td>Fragile</td> <td>Often unstable</td> <td>Stable convergence</td> </tr> <tr> <td><strong>Best Use Case</strong></td> <td>Simple automation</td> <td>Search-heavy tasks</td> <td>Expert-level problem solving</td> </tr> </table>
+
+
+## Quick Start
+
+--- 
 
 ### Installation
 
@@ -201,9 +205,101 @@ tail -f ./agents/ml_evolve/examples/ml_example/agent.log
 
 ```
 
-## 🌟 LoongFlow Results
+--- 
 
-#### Mathematical Challenges (Tao’s & AlphaEvolve sets)
+## How LoongFlow Works
+
+LoongFlow is designed around a simple idea:
+
+> Expert-level performance emerges not from better mutations, but from better thinking, reflection, and accumulated experience.
+
+To achieve this, LoongFlow organizes agent behavior into a thinking–learning–evolving loop.
+
+---
+### From Evolutionary Agents to Thinking Agents
+
+From Evolutionary Agents to Thinking Agents
+
+Frameworks such as **OpenEvolve** and **AlphaEvolve** demonstrated that agents can improve through iteration, evaluation, and selection.
+
+This marked a clear step beyond static prompting.
+
+However, in real-world expert tasks, purely evolutionary loops often struggle because:
+
+- Exploration is blind or weakly guided
+- Long-horizon reasoning breaks easily 
+- Experience remains task-specific 
+- Agents converge prematurely to local optima
+
+The core issue is not evolution itself, but **the lack of a structured thinking process**.
+
+LoongFlow addresses this by shifting the abstraction:
+
+from _evolving outputs_ to **standardizing how agents think, act, and learn**.
+
+---
+
+### PES Thinking Paradigm
+
+At the core of LoongFlow is the **PES (Plan–Execute–Summary) thinking paradigm**, inspired by how human experts conduct research: 
+
+Each agent iteration follows the same explicit structure:
+
+<table> <tr> <td width="33%">
+Plan
+
+- Understand the task and constraints  
+- Retrieve relevant past experience  
+- Design a clear, high-quality execution blueprint  
+
+> Planning ensures generation is deliberate rather than blind.
+
+
+</td> <td width="33%">
+Execute
+
+- Perform structured experimentation
+- Verify intermediate results
+- Avoid low-value or redundant trials  
+
+> Execution becomes controlled experimentation, not guesswork.
+
+</td> <td width="33%">
+Summary
+
+- Reflect deeply on successes and failures  
+- Extract reusable insights  
+- Persist experience into structured memory  
+
+> Summary prevents agents from repeating the same mistakes.
+</td> </tr> </table>
+
+<p align="center">
+<img src="./assets/images/pes-flow.jpg" alt="LoongFlow Framework" width="80%"/>
+</p>
+
+PES transforms evolution from a mutation-driven process into a **reasoning-guided improvement loop**.
+
+--- 
+
+### Learning & Evolutionary Memory
+
+Thinking alone is not enough. To improve over time, agents must **remember, generalize, and escape local optima**.
+
+LoongFlow integrates PES with a hybrid evolutionary memory system:
+
+- Multi-Island + MAP-Elites to preserve diversity 
+- Adaptive Boltzmann selection to balance exploration and exploitation 
+- Global evolutionary tree memory for long-range experience retrieval
+
+This allows agents to perform **jump-style reasoning** — leveraging past discoveries to move beyond incremental local search.
+
+
+## LoongFlow Examples
+
+---
+
+### Mathematical Challenges (Tao’s & AlphaEvolve sets)
 
 | Problem                           | Previously best known    |     AlphaEvolve      | LoongFlow Evolve Result |     Details     |
 | --------------------------------- | -----------------------  | -------------------- | ----------------------- | --------------- |
@@ -221,7 +317,7 @@ tail -f ./agents/ml_evolve/examples/ml_example/agent.log
 
 Across 11 challenges in geometry and algebra, LoongFlow outperformed all known best results and surpassed AlphaEvolve on 7 specific problems, achieving the latest SOTA.
 
-#### MLE-bench (Kaggle Challenges)
+### MLE-bench (Kaggle Challenges)
 
 | Problem                                  | LoongFlow Evolve Result | Details                                          |
 | ---------------------------------------- | ----------------------- | ------------------------------------------------ |
@@ -242,14 +338,16 @@ Across 11 challenges in geometry and algebra, LoongFlow outperformed all known b
 
 Validated across 40 Kaggle competitions within the MLE-bench, securing 22 Gold Medals. The full results will be released upon the completion of all remaining competitions.
 
-#### Others
+### Others
 
 Additionally, validation was conducted on problems such as [mathematical puzzles](./agents/general_evolve/examples/math_flip) and [MOE load balancing algorithms](./agents/general_evolve/examples/moe_lb_time)，Detailed examples can be found in [Examples](./agents/general_evolve/examples).
 
 
 ## 🧩 Advanced Usage
 
-#### EvolveAgent
+---
+
+### EvolveAgent
 
 ```python
 from evolux.evolve import EvolveAgent
@@ -271,7 +369,7 @@ result = await agent()
 
 For more details, please refer to [EvolveAgent](./src/evolux/evolve/README.md)
 
-#### ReActAgent
+### ReActAgent
 
 ```python
 from evolux.react import AgentContext, ReActAgent
@@ -291,7 +389,70 @@ result = await agent(message)
 
 For more details, please refer to [ReActAgent](./src/evolux/react/README.md)
 
+## Visualization
+
+---
+
+**Real-time evolution tracking** with interactive web interface:
+
+```
+# Launch visualization server
+python agents/general_evolve/visualizer/visualizer.py --port 8888 --checkpoint-path output-circle-packing/database/checkpoints
+```
+
+**Features:**
+
+- 🌳 Evolution tree with parent-child relationships
+- 📈 Performance tracking across generations
+- 🔍 Code diff viewer showing mutations
+- 📊 Island map for visualizing the distribution of solutions
+
+<figure align="center">
+<img src="./assets/images/visualize.png" alt="LoongFlow Framework" width="1000%"/>
+</figure>
+
+## FAQ
+
+<details>
+<summary><b>💰 How much does it cost to run?</b></summary>
+
+Like CirclePacking problem, if use Gemini 3 Pro, the cost is about **$10** in total
+
+</details>
+
+<details>
+<summary><b>🆚 How is LoongFlow related to OpenEvolve or AlphaEvolve?</b></summary>
+
+OpenEvolve and AlphaEvolve explore evolutionary improvement through mutation and selection.
+LoongFlow builds on these ideas but introduces a higher-level abstraction:
+
+**A structured thinking and learning paradigm inspired by human experts.**
+
+Rather than optimizing mutations, LoongFlow focuses on how agents plan, execute, reflect, and accumulate experience across iterations.
+</details>
+
+<details>
+<summary><b>🔧 Can I use my own LLM?</b></summary>
+
+**Yes!** LoongFlow supports any OpenAI-compatible API:
+
+- **Commercial**: OpenAI, Google
+- **Local**: vLLM, sglang
+
+Just set the `llm_config` in your config to point to your endpoint.
+
+</details>
+
+
 ## 🤝 Contribution
+
+We welcome contributions! Here's how to get started:
+
+1. 🍴 Fork the repository
+2. 🌿 Create your feature branch: git checkout -b feat-amazing-feature
+3. ✨ Add your changes and tests 
+4. 📝 Commit with a clear message 
+5. 🚀 Push and create a Pull Request
 
 Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
@@ -321,3 +482,15 @@ If you find this work useful, please consider citing:
       url={https://arxiv.org/abs/2512.24077}, 
 }
 ```
+
+---
+
+<div align="center">
+
+### **🚀 Ready to build your expert agent?**
+
+**Maintained by the LoongFlow community**
+
+*If LoongFlow helps you, please consider starring this repository.*
+
+</div>
