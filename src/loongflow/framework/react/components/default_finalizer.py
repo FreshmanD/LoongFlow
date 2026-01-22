@@ -118,13 +118,13 @@ class DefaultFinalizer(Finalizer):
             return Message.from_text(
                 sender="finalizer",
                 data=output_data.get("response", ""),
-                role=Role.TOOL,
+                role=Role.ASSISTANT,
                 mime_type=MimeType.TEXT_PLAIN,
             )
         return Message.from_text(
             sender="finalizer",
             data=output_data,
-            role=Role.TOOL,
+            role=Role.ASSISTANT,
             mime_type=MimeType.APPLICATION_JSON,
         )
 
