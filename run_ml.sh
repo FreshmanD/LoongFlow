@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -u
 set -o pipefail
 
 # =============================================================================
@@ -66,6 +65,8 @@ init_conda() {
     if [ -f "$conda_base/etc/profile.d/mamba.sh" ]; then
         source "$conda_base/etc/profile.d/mamba.sh"
     fi
+
+    eval "$(conda shell.posix hook)"
 }
 
 # Activate the target environment and set up LD_LIBRARY_PATH
