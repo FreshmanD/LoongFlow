@@ -6,7 +6,9 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../../.."))
 
-from src.agentsdk.memory.evolution.boltzmann import _boltzmann_selection_with_weights
+from src.loongflow.agentsdk.memory.evolution.boltzmann import (
+    _boltzmann_selection_with_weights,
+)
 
 
 class Solution:

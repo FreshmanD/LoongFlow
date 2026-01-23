@@ -6,7 +6,8 @@ This package provides ready-to-use agent implementations for specific domains:
 - General evolutionary algorithms
 """
 
-from . import general_evolve
-from . import ml_evolve
+from . import math_agent
+from . import ml_agent
+from . import general_agent
 
-__all__ = ["general_evolve", "ml_evolve"]
+__all__ = ["math_agent", "ml_agent", "general_agent"]
