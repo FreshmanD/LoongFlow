@@ -133,10 +133,18 @@ We believe that the key to designing an expert-level Agent capable of solving co
 
 > LoongFlow requires **Python 3.12** or higher.
 
+**Key Dependencies:**
+- **Claude Code**: If you want to use Genearl_Agent. You have to install Claude Code First. See: https://platform.claude.com/docs/zh-CN/agent-sdk/overview#macos/linux/wsl
+
 ```bash
 # Install uv/conda and clone repository
 uv: https://docs.astral.sh/uv/getting-started/installation/
 Miniforge: https://conda-forge.org/download/
+
+# Install Node.js and Claude Code (required for General Agent)
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+npm install -g @anthropic-ai/claude-code
 
 # Install with uv
 cd LoongFlow

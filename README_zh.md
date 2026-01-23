@@ -132,12 +132,20 @@ _让创造更自由！LoongFlow，让你的经验轻松转化为专业的 AI 生
 
 ### 安装
 
-> LoongFlow requires **Python 3.12** or higher.
+> LoongFlow 需要 **Python 3.12** 或更高版本。
+
+**关键依赖:**
+- **Claude Code**: 如果您要使用Genearl_Agent, 您必须先安装Claude Code到本地，安装请看：https://platform.claude.com/docs/zh-CN/agent-sdk/overview#macos/linux/wsl
 
 ```bash
 # Install uv/conda and clone repository
 uv: https://docs.astral.sh/uv/getting-started/installation/
 Miniforge: https://conda-forge.org/download/
+
+# 安装 Node.js 和 Claude Code (General Agent 必需)
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+npm install -g @anthropic-ai/claude-code
 
 # Install with uv
 cd LoongFlow
