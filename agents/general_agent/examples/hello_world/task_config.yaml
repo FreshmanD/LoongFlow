@@ -5,7 +5,7 @@ workspace_path: "./output-circle-packing"
 # If evaluator or other components do not have their own llm_config, this configuration will be used
 llm_config:
   url: "https://qianfan.baidubce.com/v2"
-  api_key: "bce-v3/ALTAK-D9BMMcLP9rvJKChqyAK8D/988a0b23bba357d11ab095afd55881eb0fef481f"
+  api_key: "xxx"
   model: "deepseek-v3"
   temperature: 0.8
   context_length: 128000
