@@ -401,6 +401,8 @@ class PESAgent(AgentBase):
         Main asynchronous execution loop for the evolution process.
         """
         start_time = int(time.time())
+        total_tokens = 0.0
+        total_cost = 0.0
 
         self._stop_event.clear()
         self._running_tasks.clear()
@@ -519,6 +521,8 @@ class PESAgent(AgentBase):
             self.database,
             start_time=start_time,
             was_interrupted=was_interrupted_flag,
+            total_tokens=total_tokens,
+            total_cost=total_cost,
         )
         return final_message
 

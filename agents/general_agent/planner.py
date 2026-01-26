@@ -6,14 +6,14 @@ This file provides general planner implementation based on Claude Code Agent
 
 import json
 import os
-from dataclasses import dataclass
-from typing import Any, Optional, List
+from typing import Any
 
+from agents.general_agent.common import ClaudeAgentConfig
 from agents.general_agent.utils import build_custom_tools_from_function_tools
 from loongflow.agentsdk.logger import get_logger
 from loongflow.agentsdk.message import Message, MimeType
 from loongflow.framework.claude_code import GENERAL_PLANNER_USER, GENERAL_PLANNER_SYSTEM
-from loongflow.framework.pes.context import Context, LLMConfig, Workspace
+from loongflow.framework.pes.context import Context, Workspace
 from loongflow.framework.pes.database import EvolveDatabase
 from loongflow.framework.pes.register import Worker
 from loongflow.framework.claude_code.claude_code_agent import ClaudeCodeAgent
@@ -27,21 +27,6 @@ from loongflow.framework.pes.database.database_tool import (
 
 logger = get_logger(__name__)
 
-
-@dataclass
-class PlannerAgentConfig:
-    """Planner configuration"""
-
-    llm_config: LLMConfig
-    system_prompt: Optional[str] = None
-    build_in_tools: Optional[List[str]] = None
-    permission_mode: Optional[str] | None = None
-    skills: Optional[List[str]] = None
-    max_turns: Optional[int] = None
-    max_thinking_tokens: Optional[int] = None
-    setting_sources: Optional[List[str]] = None
-
-
 class GeneralPlanAgent(Worker):
     """Plan Agent Class"""
 
@@ -49,8 +34,8 @@ class GeneralPlanAgent(Worker):
         super().__init__()
         self.config = (
             config
-            if isinstance(config, PlannerAgentConfig)
-            else PlannerAgentConfig(**config)
+            if isinstance(config, ClaudeAgentConfig)
+            else ClaudeAgentConfig(**config)
         )
 
         if self.config.llm_config is None:
@@ -115,8 +100,8 @@ class GeneralPlanAgent(Worker):
             tool_list=self.config.build_in_tools,
             custom_tools=database_tools,
             system_prompt=self.config.system_prompt or GENERAL_PLANNER_SYSTEM,
-            permission_mode=self.config.permission_mode,
-            setting_sources=self.config.setting_sources,
+            permission_mode=self.config.llm_config.claude_agent_options.get("permission_mode"),
+            setting_sources=["project"],
         )
 
         # Prepare initial parent info

@@ -305,7 +305,7 @@ class EvolveExecuteAgentReact(Worker):
     def _init_model(self) -> BaseLLMModel:
         """Initialize or reuse the LLM model."""
         llm = self.config.llm_config
-        if not llm or not all([llm.model, llm.url, llm.api_key]):
+        if not llm or not all([llm.model]):
             raise ValueError("model_name, url, and api_key are required in llm_config.")
 
         return LiteLLMModel.from_config(llm.model_dump())

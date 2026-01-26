@@ -35,7 +35,7 @@ _让创造更自由！LoongFlow，让你的经验轻松转化为专业的 AI 生
     </a>       
 </p>
 
-[🚀 **Quick Start**](#快速开始) • [**Examples**](#相关示例) • [**General-Evolve**](./agents/math_agent) • [**ML-Evolve**](./agents/ml_agent) • [**Discussions**](https://github.com/baidu-baige/LoongFlow/discussions)
+[🚀 **Quick Start**](#快速开始) • [**Examples**](#相关示例) • [**Math-Agent**](./agents/math_agent) • [**ML-Agent**](./agents/ml_agent) • [**Discussions**](https://github.com/baidu-baige/LoongFlow/discussions)
 
 </div>
 
@@ -46,22 +46,22 @@ _让创造更自由！LoongFlow，让你的经验轻松转化为专业的 AI 生
 
 <td width="33%" align="center" style="vertical-align: top; padding: 20px;">
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<h3 style="margin: 0; padding: 0;">🚀 <strong>General-Evolve</strong></h3>
+<h3 style="margin: 0; padding: 0;">🚀 <strong>Math-Agent</strong></h3>
 </div>
 <div align="center" style="margin: 10px 0;">
   <img src="https://img.shields.io/badge/AGENT-math_agent-blue" alt="agent Badge" />
 </div>
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<p align="center"><strong>通用进化智能体</strong></p>
+<p align="center"><strong>数学专家智能体</strong></p>
 </div>
 <div style="height: 120px; display: flex; align-items: center; justify-content: center;">
-<p align="center"><strong>高效</strong>、<strong>稳定</strong>驱动通用算法设计和持续进化</p>
+<p align="center"><strong>高效</strong>、<strong>稳定</strong>驱动高难数学题的算法设计和持续进化</p>
 </div>
 </td>
 
 <td width="33%" align="center" style="vertical-align: top; padding: 20px;">
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<h3 style="margin: 0; padding: 0;">🔥 <strong>ML-Evolve</strong></h3>
+<h3 style="margin: 0; padding: 0;">🔥 <strong>ML-Agent</strong></h3>
 </div>
 <div align="center" style="margin: 10px 0;">
   <img src="https://img.shields.io/badge/AGENT-ml_agent-blue" alt="agent Badge" />
@@ -134,18 +134,10 @@ _让创造更自由！LoongFlow，让你的经验轻松转化为专业的 AI 生
 
 > LoongFlow 需要 **Python 3.12** 或更高版本。
 
-**关键依赖:**
-- **Claude Code**: 如果您要使用Genearl_Agent, 您必须先安装Claude Code到本地，安装请看：https://platform.claude.com/docs/zh-CN/agent-sdk/overview#macos/linux/wsl
-
 ```bash
 # Install uv/conda and clone repository
 uv: https://docs.astral.sh/uv/getting-started/installation/
 Miniforge: https://conda-forge.org/download/
-
-# 安装 Node.js 和 Claude Code (General Agent 必需)
-curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-sudo apt-get install -y nodejs
-npm install -g @anthropic-ai/claude-code
 
 # Install with uv
 cd LoongFlow
@@ -163,7 +155,7 @@ pip install -e .
 
 ### 运行示例
 
-#### Run General Evolve Agent
+#### Run Math Agent
 
 ```bash
 # Config LLM: Edit task_config.yaml, recommend to use gemini-3-pro-preview or deepseek-r1-250528
@@ -186,7 +178,7 @@ tail -f ./agents/math_agent/examples/packing_circle_in_unit_square/run.log
 
 ```
 
-#### Run ML Evolve Agent
+#### Run ML Agent
 
 ```bash
 # Config LLM: Edit task_config.yaml, recommend to use gemini-3-pro-preview or deepseek-r1-250528
@@ -382,7 +374,7 @@ agent.register_summary_worker("summary", SummaryAgent)
 result = await agent()
 ```
 
-更多细节，可以查看 [PESAgent](./src/evolux/evolve)
+更多细节，可以查看 [PESAgent](./src/loongflow/framework/pes/README_zh.md)
 
 #### ReActAgent
 
@@ -402,7 +394,7 @@ agent = ReActAgent.create_default(model=model, sys_prompt=sys_prompt, toolkit=to
 result = await agent(message)
 ```
 
-更多细节，可以查看 [ReActAgent](./src/evolux/react)
+更多细节，可以查看 [ReActAgent](./src/loongflow/framework/react/README.md)
 
 ## 可视化界面
 

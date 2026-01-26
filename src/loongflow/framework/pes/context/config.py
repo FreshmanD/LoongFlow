@@ -40,17 +40,17 @@ class LoggerConfig(BaseModel):
 class LLMConfig(BaseModel):
     """LLM configuration class."""
 
-    url: str = Field(..., description="The API endpoint URL for the language model.")
-    api_key: str = Field(..., description="The API key for authentication.")
     model: str = Field(
         ..., description="The specific model name to use, e.g., 'gpt-4o'."
     )
+    url: str = Field(default=None, description="The API endpoint URL for the language model.")
+    api_key: str = Field(default=None, description="The API key for authentication.")
     model_provider: Optional[str] = Field(
         default=None,
         description="The provider of the model, such as 'openai', 'azure', etc.",
     )
     temperature: float = Field(
-        default=0.8,
+        default=None,
         ge=0.0,
         le=2.0,
         description="Controls randomness. Lower is more deterministic.",
@@ -62,7 +62,7 @@ class LLMConfig(BaseModel):
         default=16384, gt=0, description="The maximum number of tokens to generate."
     )
     top_p: float = Field(
-        default=1.0, ge=0.0, le=1.0, description="Controls nucleus sampling."
+        default=None, ge=0.0, le=1.0, description="Controls nucleus sampling."
     )
     timeout: int = Field(
         default=600,
@@ -75,6 +75,10 @@ class LLMConfig(BaseModel):
     prompt_token_price: float = Field(
         default=0.0,
         description="Price per token for prompt requests.",
+    )
+    claude_agent_options: Optional[Dict[str, Any]] = Field(
+        default={},
+        description="Additional options for Claude Agent SDK.",
     )
 
 

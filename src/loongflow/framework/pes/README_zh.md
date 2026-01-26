@@ -1,141 +1,150 @@
 # ✨ PESAgent
 
-PESAgent 是一个面向通用算法任务设计的进化范式，借鉴人类研究员的探索性工作模式，将单轮进化抽象为“Planner-Executor-Summary”三个阶段，通过进化记忆引导模型进行多轮迭代式探索，持续积累经验并驱动改进，有效提升新解决方案的质量与进化过程的确定性，缓解无效评估与随机试错问题，自动实现复杂任务高效率、低成本的持续进化。
+PESAgent 是一个面向长程任务设计的进化智能体，采用 **"Planner-Executor-Summary"（规划-执行-总结）** 范式。它借鉴人类研究员的探索性工作模式，将单步生成转化为持续的进化过程。
 
-<p align="center">
-<img src="https://evolux-pub.bj.bcebos.com/share/evolve_agent_fr_v1.png" alt="LoongFlow Evolve Framework" width="80%"/>
-</p>
+核心特性包括：
+- **三阶段进化**：将优化循环分解为规划（方向）、执行（实施）和总结（反思）三个阶段。
+- **岛屿模型进化**：支持在多个“岛屿”上进行并发进化，通过迁移机制保持种群多样性并避免陷入局部最优。
+- **先进记忆机制**：结合 MAP-Elites 和玻尔兹曼采样（Boltzmann sampling）来高效管理解决方案种群。
 
-- Planner：负责充分理解任务和全局进化状态，结合采样和相关历史进化经验，生成当前迭代的改进指导方案，为当前迭代生成专家级指导。
-- Executor：负责实施生成新的解决方案，并进行方案评估、错误调试和针对性充分线性优化，产出规划方案指导下的最优解。
-- Summary：负责对新产生的解决方案进行全面分析，总结成功和失败经验，为下次进化提供导向，并将本轮进化信息发布到进化记忆。
+## 🧠 核心组件
 
-## 🚀 Quick Start
+- **Planner（规划者）**：充当战略家。负责分析全局进化状态和历史轨迹，为下一次迭代提出高价值的改进方向。
+- **Executor（执行者）**：充当工程师。负责实施规划者的建议，生成代码/解决方案，运行自测，并提交结果进行评估。
+- **Summary（总结者）**：充当审阅者。负责分析执行结果，提取洞察（成功/失败经验），更新进化记忆，并优化知识库。
 
-PESAgent 内置了一个针对通用算法任务进化的实现示例 MathPESAgent，我们已 packing_circle_in_unit_square 示例，您可以直接运行：
+---
+
+## 🚀 快速开始
+
+PESAgent 内置了示例任务。您可以运行 `packing_circle_in_unit_square` 任务来体验其功能：
 
 ```bash
-# Run your first evolve task, the evolution results are in the ./output directory
+# 运行示例任务（结果将保存在 ./output 目录中）
 ./run_math.sh packing_circle_in_unit_square --background
 
-# Stop task
+# 停止任务
 ./run_math.sh stop packing_circle_in_unit_square
 ```
 
-### 🛠️ Self-defined Task
+## 🛠️ 定义自定义任务
 
-在`agents/math_agent/examples`目录下，您可以新建文件夹创建自定义进化任务。对于一个进化任务，必须要包含 3 个文件。
+要定义一个新的进化任务，请在 `agents/math_agent/examples/<your_task>` 目录下创建一个文件夹，并包含以下三个必需文件：
 
-- `task_config.yaml` (任务配置文件)：定义了任务目标、LLM 配置、三阶段设置、评估器设置等。
-- `initial_program.py` (初始程序)：定义了任务初始的解决方案，为后续进化生成的新解决方案提供初始输入，包括必要的评估入口方法、固定不可进化的自测方法等。
-- `eval_program.py` (评估程序)：定义了评估器，用于评估新生成的解决方案是否满足任务目标，并完成打分工作，系统会根据打分情况判断进化任务是否完成。
+1.  **`task_config.yaml`**：任务、LLM 和进化参数的配置。
+2.  **`initial_program.py`**：一个有效的初始解决方案（可以是占位实现）。
+3.  **`eval_program.py`**：用于对解决方案进行打分的评估器逻辑。
 
-#### Examples of task configuration
+### 1. 任务配置 (`task_config.yaml`)
 
-**Simple task config**：
-从 examples 中随机挑选一个 task_config.yaml，你只需要修改 LLM 配置和任务描述即可。
+您可以配置进化过程，包括并发数和岛屿模型设置。
 
 ```yaml
-# 全局 LLM 配置 (可选)。
-# 如果 evaluator 或其他组件没有自己的 llm_config，将使用此配置。
+# 1. 全局 LLM 配置
 llm_config:
-  url: "http://xxx/v1"
-  api_key: "xxx"
   model: "deepseek-r1-250528"
+  url: "http://your-api-endpoint/v1"
+  api_key: "your-api-key"
   temperature: 0.8
-  context_length: 128000
   max_tokens: 32768
-  top_p: 1.0
-  timeout: 1200
-# ------------------------------------------------------------------------------
-# 定义主进化流程的配置
-# ------------------------------------------------------------------------------
+
+# 2. 进化流程配置
 evolve:
-  # 任务描述，是整个进化过程的核心目标
-  task: |
-    Problem Statement: xxx
+  task: "Find the optimal configuration for..."  # 您的任务描述
+  target_score: 1.0                              # 达到此分数时停止
+  max_iterations: 100                            # 最大进化循环次数
+  concurrency: 5                                 # 并发工作者数量（并行进化）
+
+  # 数据库与种群设置（岛屿模型）
+  database:
+    storage_type: "in_memory"      # 或 "redis"
+    num_islands: 3                 # 并行种群（岛屿）数量
+    population_size: 100           # 每个岛屿的解决方案数量
+    migration_interval: 10         # 每 N 次迭代交换一次解决方案
+    checkpoint_interval: 50        # 每 N 次迭代自动保存检查点
+
+  # 组件选择
+  planner_name: "evolve_planner"
+  executor_name: "evolve_executor_fuse"
+  summary_name: "evolve_summary"
+
+  # 评估器设置
+  evaluator:
+    timeout: 60            # 允许的评估秒数
+    evaluate_code: |       # 可选：内联评估逻辑或路径
+      from eval_program import evaluate
 ```
 
-**Complex task config**：
-你可以根据任务情况选择更适合的 Executor、评估超时时间、最大进化迭代次数等。
+### 2. 初始程序 (`initial_program.py`)
 
-```yaml
-# 本次运行选择使用的组件名称
-planner_name: "evolve_planner"
-executor_name: "evolve_executor_fuse"
-summary_name: "evolve_summary"
-
-# 进化过程的核心参数
-max_iterations: 1000
-target_score: 1.0
-concurrency: 1
-
-# 评估器配置
-evaluator:
-  timeout: 3600
-```
-
-#### Examples of initial_program
-
-你必须要给你的进化任务准备一个起始程序，它必须要包含一个可以被评估器调用的测试入口函数，以及输入输出结构。至于他的实现甚至可以是个空函数。PESAgent 会根据你的任务描述，自动填充这个测试入口函数，这就是进化的魅力 👏
+必须提供评估器所期望的入口函数。
 
 ```python
 import numpy as np
 
-
-def search_coefficients():
-    """Find the coefficients of the problem."""
-    best_coefficients = np.array([1, 2, 3])
-    return best_coefficients
+def solve():
+    """初始有效（但可能次优）的解决方案。"""
+    return np.array([0, 0, 0])
 ```
 
-#### Examples of eval_program
+### 3. 评估程序 (`eval_program.py`)
 
-评估器是整个进化任务的核心，它决定了新生成的解决方案是否满足任务目标，并完成打分工作。你只需要修改 evaluate 函数。
-**好的评估反馈会让 LLM 生成更加优质的解决方案，加速进化效率。**
+进化的核心。它必须返回一个分数（0.0 到 1.0）和反馈。
 
-具体可以参考：[minimum_overlap_problem](../../../../agents/math_agent/examples/minimum_overlap_problem/eval_program.py)
-
-### 📂 Directory Structure
-
-```
-.
-├── agents
-│   ├── math_agent
-│   │   ├── examples
-│   │   │   ├── packing_circle_in_unit_square
-│   │   │   │   ├── eval_program.py
-│   │   │   │   ├── initial_program.py
-│   │   │   │   └── task_config.yaml
-│   │   │   ├── ...
-│   │   │   └── uncertainty_inequality
-│   │   │       ├── eval_program.py
-│   │   │       ├── initial_program.py
-│   │   │
+```python
+def evaluate(solution_code):
+    # 动态导入或执行 solution_code
+    # ...
+    score = calculate_score(result)
+    return {
+        "score": score,
+        "feedback": "解决方案有效，但收敛速度较慢。"
+    }
 ```
 
-## 🎩 Advance Usage
+---
 
-您可以根据任务需求，自定义 Planner、Executor、Summary 组件，最后通过 register 方法将其注入到 PESAgent 中，从而创建出您自定义的「PESAgent」。
+## 💾 检查点与恢复
+
+PESAgent 会根据 `checkpoint_interval` 自动保存检查点。
+
+- **检查点** 存储在 `output/database` 目录下。
+- **命名格式**：`checkpoint-iter-{iteration_id}-{completion_count}`。
+
+要从检查点恢复，通常在初始化 `PESAgent` 时传入检查点路径（或通过 `run_task.sh` 脚本支持）：
+
+```python
+agent = PESAgent(config=config, checkpoint_path="path/to/checkpoint-iter-100-50")
+```
+
+---
+
+## 🎩 高级用法：自定义组件
+
+您可以通过实现 `Worker` 接口并注册它们来自定义 **Planner**、**Executor** 或 **Summary**。
 
 ```python
 from loongflow.framework.evolve import PESAgent
 
-# Config evolve agent
-agent = PESAgent(
-    config=config,
-    checkpoint_path=checkpoint_path,
-)
+# 1. 初始化 Agent
+agent = PESAgent(config=config)
 
-# Register worker（Implement the Planner, Executor, and Summary interfaces）
-agent.register_planner_worker("planner", PlanAgent)
-agent.register_executor_worker("executor", ExecuteAgent)
-agent.register_summary_worker("summary", SummaryAgent)
+# 2. 注册自定义 Worker
+agent.register_planner_worker("my_planner", MyCustomPlanner)
+agent.register_executor_worker("my_executor", MyCustomExecutor)
 
-# Run agent
-result = await agent()
+# 3. 运行
+await agent.run()
 ```
 
-### 🔧 Custom Components
+### 目录结构
 
-Planner、Executor、Summary 三个组件都是继承自 Worker，您只需要实现 run 方法即可。run 的实现既可以是确定函数，也可以是子 Agent，具体可以参考：[planner](../../../../agents/math_agent/planner/plan_agent.py)
+```
+├── agents
+│   ├── math_agent
+│   │   ├── examples
+│   │   │   ├── <task_name>
+│   │   │   │   ├── eval_program.py
+│   │   │   │   ├── initial_program.py
+│   │   │   │   └── task_config.yaml
+```

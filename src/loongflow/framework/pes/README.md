@@ -1,138 +1,150 @@
 # ✨ PESAgent
 
-PESAgent is an evolutionary paradigm designed for general algorithmic tasks. Borrowing from the exploratory work mode of human researchers, it abstracts single-round evolution into three stages: "Planner-Executor-Summary". Through evolutionary memory, it guides the model to conduct multi-round iterative exploration, continuously accumulating experience and driving improvement. This effectively enhances the quality of new solutions and the certainty of the evolutionary process, alleviating issues of ineffective evaluation and random trial-and-error, thereby automatically realizing high-efficiency, low-cost continuous evolution for complex tasks.
+PESAgent is an evolutionary agent designed for long-horizon tasks, implementing a **"Planner-Executor-Summary"** paradigm. By mimicking the exploratory workflow of human researchers, it transforms single-step generation into a continuous evolutionary process.
 
-<p align="center"> <img src="https://evolux-pub.bj.bcebos.com/share/evolve_agent_fr_v1.png" alt="LoongFlow Evolve Framework" width="80%"/> </p>
+Key features include:
+- **Three-Stage Evolution**: Decomposes the optimization loop into Planning (Direction), Execution (Implementation), and Summarization (Reflection).
+- **Island Model Evolution**: Supports concurrent evolution across multiple "islands" with migration mechanisms to maintain diversity and escape local optima.
+- **Advanced Memory**: Utilizes a combination of MAP-Elites and Boltzmann sampling to manage the population of solutions efficiently.
 
-- Planner: Responsible for fully understanding the task and global evolutionary state. Combining sampling and relevant historical evolutionary experience, it generates improvement guidance for the current iteration, providing expert-level direction.
-- Executor: Responsible for implementing new solutions, performing solution evaluation, debugging errors, and conducting targeted sufficient linear optimization to produce the optimal solution under the planner's guidance.
-- Summary: Responsible for a comprehensive analysis of the newly generated solutions, summarizing successful and failed experiences to guide the next evolution, and publishing the current round's evolution information to the evolutionary memory.
+## Core Components
+
+- **Planner**: Acts as the strategist. It analyzes the global evolutionary state and historical trajectory to propose high-value directions for the next iteration.
+- **Executor**: Acts as the engineer. It implements the planner's suggestions, generates code/solutions, runs self-tests, and submits the result for evaluation.
+- **Summary**: Acts as the reviewer. It analyzes the execution results, extracts insights (successes/failures), updates the evolutionary memory, and refines the knowledge base.
+
+---
 
 ## 🚀 Quick Start
 
-PESAgent includes a built-in implementation example, MathPESAgent, for general algorithmic task evolution. We have provided the packing_circle_in_unit_square example, which you can run directly:
+PESAgent includes built-in examples. You can run the `packing_circle_in_unit_square` task to see it in action:
 
 ```bash
-# Run your first evolve task, the evolution results are in the ./output directory
+# Run the example task (results will be in ./output)
 ./run_math.sh packing_circle_in_unit_square --background
 
-# Stop task
+# Stop the task
 ./run_math.sh stop packing_circle_in_unit_square
 ```
 
-### 🛠️ Self-defined Task
+## 🛠️ Defining Custom Tasks
 
-You can create custom evolutionary tasks by creating a new folder in the `agents/math_agent/examples` directory. An evolutionary task must contain three files:
+To define a new evolutionary task, create a folder in `agents/math_agent/examples/<your_task>` with three required files:
 
-- `task_config.yaml` (Task Configuration): Defines task goals, LLM configuration, three-stage settings, evaluator settings, etc.
-- `initial_program.py` (Initial Program): Defines the initial solution for the task, providing initial input for subsequent new solution generation. This includes necessary evaluation entry methods, fixed non-evolvable self-test methods, etc.
-- `eval_program.py` (Evaluation Program): Defines the evaluator used to assess whether the new solution meets the task goals and performs scoring. The system judges whether the evolutionary task is complete based on the score.
+1.  **`task_config.yaml`**: Configuration for the task, LLM, and evolutionary parameters.
+2.  **`initial_program.py`**: A valid starting solution (can be a dummy implementation).
+3.  **`eval_program.py`**: The evaluator logic to score solutions.
 
-#### Examples of task configuration
+### 1. Task Configuration (`task_config.yaml`)
 
-**Simple task config**:
-Pick a random task_config.yaml from the examples; you only need to modify the LLM configuration and task description.
+You can configure the evolution process, including concurrency and the island model.
 
 ```yaml
-# Global LLM configuration (Optional).
-# If evaluator or other components don't have their own llm_config, this configuration will be used.
+# 1. Global LLM Configuration
 llm_config:
-  url: "http://xxx/v1"
-  api_key: "xxx"
   model: "deepseek-r1-250528"
+  url: "http://your-api-endpoint/v1"
+  api_key: "your-api-key"
   temperature: 0.8
-  context_length: 128000
   max_tokens: 32768
-  top_p: 1.0
-  timeout: 1200
-# ------------------------------------------------------------------------------
-# Define the configuration for the main evolution process
-# ------------------------------------------------------------------------------
+
+# 2. Evolution Process Configuration
 evolve:
-  # Task description, the core goal of the entire evolution process
-  task: |
-    Problem Statement: xxx
+  task: "Find the optimal configuration for..."  # Your task description
+  target_score: 1.0                              # Stop when this score is reached
+  max_iterations: 100                            # Maximum number of evolution loops
+  concurrency: 5                                 # Number of concurrent workers (parallel evolution)
+
+  # Database & Population Settings (Island Model)
+  database:
+    storage_type: "in_memory"      # or "redis"
+    num_islands: 3                 # Number of parallel populations
+    population_size: 100           # Solutions per island
+    migration_interval: 10         # Exchange solutions every N iterations
+    checkpoint_interval: 50        # Auto-save checkpoint every N iterations
+
+  # Component Selection
+  planner_name: "evolve_planner"
+  executor_name: "evolve_executor_fuse"
+  summary_name: "evolve_summary"
+
+  # Evaluator Settings
+  evaluator:
+    timeout: 60            # Seconds allowed for evaluation
+    evaluate_code: |       # Optional: Inline evaluation logic or path
+      from eval_program import evaluate
 ```
 
-**Complex task config**:
-You can choose a more suitable Executor, evaluation timeout, maximum evolution iterations, etc., based on the task situation.
+### 2. Initial Program (`initial_program.py`)
 
-```yaml
-# Component names selected for this run
-planner_name: "evolve_planner"
-executor_name: "evolve_executor_fuse"
-summary_name: "evolve_summary"
-
-# Core parameters of the evolutionary process
-max_iterations: 1000
-target_score: 1.0
-concurrency: 1
-
-# Evaluator configuration
-evaluator:
-  timeout: 3600
-```
-
-#### Examples of initial_program
-
-You must prepare a starting program for your evolutionary task. It must contain a test entry function callable by the evaluator, as well as input/output structures. Its implementation can even be an empty function. PESAgent will automatically fill this test entry function based on your task description—that is the charm of evolution 👏
+Must provide the entry point function expected by the evaluator.
 
 ```python
 import numpy as np
 
-
-def search_coefficients():
-    """Find the coefficients of the problem."""
-    best_coefficients = np.array([1, 2, 3])
-    return best_coefficients
+def solve():
+    """Initial valid (but likely suboptimal) solution."""
+    return np.array([0, 0, 0])
 ```
 
-#### Examples of eval_program
+### 3. Evaluation Program (`eval_program.py`)
 
-The evaluator is the core of the entire evolutionary task; it determines if the new solution meets the task goals and handles scoring. You only need to modify the evaluate function.
-**Good evaluation feedback allows the LLM to generate higher-quality solutions and accelerates evolutionary efficiency.**
+The heart of evolution. It must return a score (0.0 to 1.0) and feedback.
 
-For details, please refer to：[minimum_overlap_problem](../../../../agents/math_agent/examples/minimum_overlap_problem/eval_program.py)
+```python
+def evaluate(solution_code):
+    # Dynamic import or execution of solution_code
+    # ...
+    score = calculate_score(result)
+    return {
+        "score": score,
+        "feedback": "The solution is valid but convergence is slow."
+    }
+```
 
-### 📂 Directory Structure
+---
+
+## 💾 Checkpoints & Resuming
+
+PESAgent automatically saves checkpoints based on `checkpoint_interval`.
+
+- **Checkpoints** are stored in the `output/database` directory.
+- **Naming format**: `checkpoint-iter-{iteration_id}-{completion_count}`.
+
+To resume from a checkpoint, you typically pass the checkpoint path when initializing `PESAgent` (or via the `run_task.sh` script if supported):
+
+```python
+agent = PESAgent(config=config, checkpoint_path="path/to/checkpoint-iter-100-50")
+```
+
+---
+
+## 🎩 Advanced Usage: Custom Components
+
+You can customize the **Planner**, **Executor**, or **Summary** by implementing the `Worker` interface and registering them.
+
+```python
+from loongflow.framework.evolve import PESAgent
+
+# 1. Initialize Agent
+agent = PESAgent(config=config)
+
+# 2. Register Custom Workers
+agent.register_planner_worker("my_planner", MyCustomPlanner)
+agent.register_executor_worker("my_executor", MyCustomExecutor)
+
+# 3. Run
+await agent.run()
+```
+
+### Directory Structure
 
 ```
 ├── agents
 │   ├── math_agent
 │   │   ├── examples
-│   │   │   ├── packing_circle_in_unit_square
+│   │   │   ├── <task_name>
 │   │   │   │   ├── eval_program.py
 │   │   │   │   ├── initial_program.py
 │   │   │   │   └── task_config.yaml
-│   │   │   ├── ...
-│   │   │   └── uncertainty_inequality
-│   │   │       ├── eval_program.py
-│   │   │       ├── initial_program.py
-│   │   │
 ```
-
-## 🎩 Advance Usage
-
-You can customize the Planner, Executor, and Summary components according to task requirements, and inject them into PESAgent via the register method to create your custom "PESAgent".
-
-```python
-from loongflow.framework.evolve import PESAgent
-
-# Config evolve agent
-agent = PESAgent(
-    config=config,
-    checkpoint_path=checkpoint_path,
-)
-
-# Register worker (Implement the Planner, Executor, and Summary interfaces)
-agent.register_planner_worker("planner", PlanAgent)
-agent.register_executor_worker("executor", ExecuteAgent)
-agent.register_summary_worker("summary", SummaryAgent)
-
-# Run agent
-result = await agent()
-```
-
-### 🔧 Custom Components
-
-The Planner, Executor, and Summary components all inherit from Worker. You only need to implement the run method. The implementation of run can be a deterministic function or a sub-Agent. For details, please refer to: [planner](../../../../agents/math_agent/planner/plan_agent.py)

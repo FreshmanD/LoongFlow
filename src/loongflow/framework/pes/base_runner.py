@@ -141,7 +141,7 @@ class BasePESRunner(ABC):
         # Logging overrides
         parser.add_argument(
             "--log-level",
-            type=str.upper,
+            type=str,
             default=None,
             choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
             help="Override the global logging level.",

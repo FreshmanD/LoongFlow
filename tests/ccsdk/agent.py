@@ -3,12 +3,6 @@ import os
 
 from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage, ResultMessage
 
-os.environ["ANTHROPIC_BASE_URL"] = "https://qianfan.baidubce.com/anthropic"
-os.environ["ANTHROPIC_API_KEY"] = (
-    "bce-v3/ALTAK-D9BMMcLP9rvJKChqyAK8D/988a0b23bba357d11ab095afd55881eb0fef481f"
-)
-
-
 async def main():
     # Agentic loop: streams messages as Claude works
     async for message in query(

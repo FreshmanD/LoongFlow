@@ -102,10 +102,10 @@ class LiteLLMFormatter(BaseFormatter):
         self,
         request: CompletionRequest,
         model_name: str,
-        base_url: str,
-        api_key: str,
         stream: bool = False,
         timeout: int = 600,
+        base_url:Optional[str] = None,
+        api_key: Optional[str] = None,
         model_provider: Optional[str] = None,
         **params,
     ) -> Dict[str, Any]:
@@ -136,8 +136,6 @@ class LiteLLMFormatter(BaseFormatter):
         )
 
         kwargs: Dict[str, Any] = {
-            "base_url": base_url,
-            "api_key": api_key,
             "model": model_name,
             "messages": llm_messages,
             "stream": False,  # TODO: support streaming later
@@ -150,6 +148,12 @@ class LiteLLMFormatter(BaseFormatter):
             value = params.get(key)
             if value is not None:
                 kwargs[key] = value
+
+        if base_url is not None:
+            kwargs["base_url"] = base_url
+
+        if api_key is not None:
+            kwargs["api_key"] = api_key
 
         # Determine provider (required for non-OpenAI models)
         logger.debug(f"custom_llm_provider: {provider_name}")

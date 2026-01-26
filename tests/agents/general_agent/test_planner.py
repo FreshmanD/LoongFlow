@@ -21,12 +21,12 @@ async def test_run():
     """test general planner"""
     full_config = {
         "llm_config": LLMConfig(
-            url="https://qianfan.baidubce.com/anthropic",
-            api_key="xxx",
             model="deepseek-v3.2",
+            claude_agent_options={
+                "max_turns": 10,
+                "max_thinking_tokens": 10000,
+            }
         ),
-        "max_turns": 10,
-        "max_thinking_tokens": 10000,
         "skills": ["skill-creator"],
     }
     register_worker("general_planner", "planner", GeneralPlanAgent)

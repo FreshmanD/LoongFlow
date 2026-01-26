@@ -20,9 +20,7 @@ async def test_run():
     """test ml planner"""
     full_config = {
         "llm_config": LLMConfig(
-            url="https://qianfan.baidubce.com/v2",
-            api_key="xxx",
-            model="deepseek-v3",
+            model="deepseek-v3.2",
         ),
     }
     register_worker("ml_planner", "planner", MLPlannerAgent)
@@ -34,9 +32,7 @@ async def test_run():
     message = await planner.run(
         context=Context(
             base_path="./output",
-            task=Path("./tests/agents/ml_agent/resource/description.md").read_text(
-                encoding="utf-8"
-            ),
+            task=Path("./tests/agents/ml_agent/resource/description.md").read_text(encoding="utf-8"),
             metadata={
                 "task_data_path": "./tests/agents/ml_agent/resource",
             },

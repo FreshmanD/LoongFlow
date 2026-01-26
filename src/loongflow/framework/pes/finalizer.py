@@ -18,7 +18,7 @@ class Finalizer(ABC):
 
     @abstractmethod
     async def finalize(
-        self, database: EvolveDatabase, start_time: int, was_interrupted: bool
+        self, database: EvolveDatabase, start_time: int, was_interrupted: bool, total_cost: float, total_tokens: float
     ) -> Any:
         """
         Generates the final result of the evolution process based on the state
@@ -28,6 +28,8 @@ class Finalizer(ABC):
             database: The database containing the full history and state.
             start_time: The timestamp when the evolution process started.
             was_interrupted: A boolean indicating if the process was interrupted.
+            total_cost: The total cost of the evolution process.
+            total_tokens: The total tokens used during the evolution process.
 
         Returns:
             The final message summarizing the outcome.
@@ -43,7 +45,7 @@ class LoongFlowFinalizer(Finalizer):
     """
 
     async def finalize(
-        self, database: EvolveDatabase, start_time: int, was_interrupted: bool
+        self, database: EvolveDatabase, start_time: int, was_interrupted: bool, total_cost: float, total_tokens: float
     ) -> Message:
         """
         Queries the database to find the best solution and its metadata,
@@ -53,6 +55,8 @@ class LoongFlowFinalizer(Finalizer):
             database: The evolution database to query for results.
             start_time: The timestamp when the evolution process started.
             was_interrupted: A boolean indicating if the process was interrupted.
+            total_cost: The total cost of the evolution process.
+            total_tokens: The total tokens used during the evolution process.
 
         Returns:
             A Message object containing either the EvolveResultElement or a status text.
@@ -80,12 +84,12 @@ class LoongFlowFinalizer(Finalizer):
                     summary, role=Role.ASSISTANT, sender="LoongFlowFinalizer"
                 )
 
-            best_solution = "N/A"
-            best_evaluation = "N/A"
-            best_solutions = database.get_best_solutions(top_k=1)
+            best_solution_list = []
+            best_evaluation_list = []
+            best_solutions = database.get_best_solutions(top_k=3)
             if best_solutions and len(best_solutions) > 0:
-                best_solution = best_solutions[0].get("solution", "")
-                best_evaluation = best_solutions[0].get("evaluation", "")
+                best_solution_list.append(best_solutions[0].get("solution", ""))
+                best_evaluation_list.append(best_solutions[0].get("evaluation", ""))
 
             start_time_str = datetime.fromtimestamp(start_time).strftime(
                 "%Y-%m-%d %H:%M:%S"
@@ -95,8 +99,8 @@ class LoongFlowFinalizer(Finalizer):
             )
             result_element = EvolveResultElement(
                 best_score=best_score,
-                best_solution=best_solution,
-                evaluation=best_evaluation,
+                best_solution=best_solution_list,
+                evaluation=best_evaluation_list,
                 start_time=start_time_str,
                 end_time=end_time_str,
                 cost_time=cost_time,
@@ -109,7 +113,9 @@ class LoongFlowFinalizer(Finalizer):
                 f"Best score achieved: {result_element.best_score}\n"
                 f"Found in iteration: {result_element.last_iteration}\n"
                 f"Total iterations: {result_element.total_iterations}\n"
-                f"Total cost time: {result_element.cost_time} seconds."
+                f"Total cost time: {result_element.cost_time} seconds\n"
+                f"Total tokens: {result_element.total_tokens}\n"
+                f"Total cost: {result_element.total_cost}"
             )
 
             return Message.from_elements(

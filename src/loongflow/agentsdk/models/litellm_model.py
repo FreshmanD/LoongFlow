@@ -28,8 +28,8 @@ class LiteLLMModel(BaseLLMModel):
     def __init__(
         self,
         model_name: str,
-        base_url: str,
-        api_key: str,
+        base_url: Optional[str] = None,
+        api_key: Optional[str] = None,
         timeout: int = 600,
         model_provider: Optional[str] = None,
         **kwargs,
@@ -60,7 +60,7 @@ class LiteLLMModel(BaseLLMModel):
 
         Args:
             config: Configuration dictionary containing model settings.
-                    Must include 'model', 'url', and 'api_key'.
+                    Must include 'model'. 'url' and 'api_key' are optional (can read from env).
 
         Returns:
             LiteLLMModel: Initialized model instance.
@@ -69,7 +69,7 @@ class LiteLLMModel(BaseLLMModel):
             KeyError: If required fields are missing from config.
         """
         # Validate required fields
-        required = ["model", "url", "api_key"]
+        required = ["model"]
         if missing := [f for f in required if f not in config]:
             raise KeyError(f"Config missing required fields: {missing}")
 

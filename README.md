@@ -32,7 +32,7 @@ Enable Agents to think and learn through the PES paradigm, and accumulate experi
     </a>       
 </p>
 
-[🚀 **Quick Start**](#quick-start) • [**Examples**](#loongflow-examples) • [**Math-Evolve**](./agents/math_agent) • [**ML-Evolve**](./agents/ml_agent) • [**Discussions**](https://github.com/baidu-baige/LoongFlow/discussions)
+[🚀 **Quick Start**](#quick-start) • [**Examples**](#loongflow-examples) • [**Math-Agent**](./agents/math_agent) • [**ML-Agent**](./agents/ml_agent) • [**Discussions**](https://github.com/baidu-baige/LoongFlow/discussions)
 
 </div>
 
@@ -43,13 +43,13 @@ Enable Agents to think and learn through the PES paradigm, and accumulate experi
 
 <td width="33%" align="center" style="vertical-align: top; padding: 20px;">
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<h3 style="margin: 0; padding: 0;">🚀 <strong>Math-Evolve</strong></h3>
+<h3 style="margin: 0; padding: 0;">🚀 <strong>Math-Agent</strong></h3>
 </div>
 <div align="center" style="margin: 10px 0;">
   <img src="https://img.shields.io/badge/AGENT-math_agent-blue" alt="agent Badge" />
 </div>
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<p align="center"><strong>Math Evolve Agent </strong></p>
+<p align="center"><strong>Math Problem Agent </strong></p>
 </div>
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
 <p align="center"><strong>Efficient</strong>,<strong>stable</strong> driving of math algorithm design and continuous evolution.</p>
@@ -58,7 +58,7 @@ Enable Agents to think and learn through the PES paradigm, and accumulate experi
 
 <td width="30%" align="center" style="vertical-align: top; padding: 20px;">
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<h3 style="margin: 0; padding: 0;">🔥 <strong>ML-Evolve</strong></h3>
+<h3 style="margin: 0; padding: 0;">🔥 <strong>ML-Agent</strong></h3>
 </div>
 <div align="center" style="margin: 10px 0;">
   <img src="https://img.shields.io/badge/AGENT-ml_agent-blue" alt="agent Badge" />
@@ -133,18 +133,10 @@ We believe that the key to designing an expert-level Agent capable of solving co
 
 > LoongFlow requires **Python 3.12** or higher.
 
-**Key Dependencies:**
-- **Claude Code**: If you want to use Genearl_Agent. You have to install Claude Code First. See: https://platform.claude.com/docs/zh-CN/agent-sdk/overview#macos/linux/wsl
-
 ```bash
 # Install uv/conda and clone repository
 uv: https://docs.astral.sh/uv/getting-started/installation/
 Miniforge: https://conda-forge.org/download/
-
-# Install Node.js and Claude Code (required for General Agent)
-curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-sudo apt-get install -y nodejs
-npm install -g @anthropic-ai/claude-code
 
 # Install with uv
 cd LoongFlow
@@ -162,7 +154,7 @@ pip install -e .
 
 ### Run Examples
 
-#### Run General Evolve Agent
+#### Run Math Agent
 
 ```bash
 # Config LLM: Edit task_config.yaml, recommend to use gemini-3-pro-preview or deepseek-r1-250528
@@ -185,7 +177,7 @@ tail -f ./agents/math_agent/examples/packing_circle_in_unit_square/run.log
 
 ```
 
-#### Run ML Evolve Agent
+#### Run ML Agent
 
 ```bash
 # Config LLM: Edit task_config.yaml, recommend to use gemini-3-pro-preview or deepseek-r1-250528
@@ -372,7 +364,7 @@ agent.register_summary_worker("summary", SummaryAgent)
 result = await agent()
 ```
 
-For more details, please refer to [PESAgent](./src/evolux/evolve/README.md)
+For more details, please refer to [PESAgent](./src/loongflow/framework/pes/README.md)
 
 ### ReActAgent
 
@@ -392,7 +384,7 @@ agent = ReActAgent.create_default(model=model, sys_prompt=sys_prompt, toolkit=to
 result = await agent(message)
 ```
 
-For more details, please refer to [ReActAgent](./src/evolux/react/README.md)
+For more details, please refer to [ReActAgent](./src/loongflow/framework/react/README.md)
 
 ## Visualization
 
