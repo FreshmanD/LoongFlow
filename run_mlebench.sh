@@ -125,12 +125,12 @@ do_init() {
     local pip_file
     if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi >/dev/null 2>&1; then
         info "Detected NVIDIA GPU, using GPU environment"
-        env_file="$SCRIPT_DIR/agents/ml_evolve/examples/environment_gpu.yaml"
-        pip_file="$SCRIPT_DIR/agents/ml_evolve/examples/requirements_gpu.txt"
+        env_file="$SCRIPT_DIR/agents/ml_agent/examples/environment_gpu.yaml"
+        pip_file="$SCRIPT_DIR/agents/ml_agent/examples/requirements_gpu.txt"
     else
         info "No GPU detected, using CPU environment"
-        env_file="$SCRIPT_DIR/agents/ml_evolve/examples/environment_cpu.yaml"
-        pip_file="$SCRIPT_DIR/agents/ml_evolve/examples/requirements_cpu.txt"
+        env_file="$SCRIPT_DIR/agents/ml_agent/examples/environment_cpu.yaml"
+        pip_file="$SCRIPT_DIR/agents/ml_agent/examples/requirements_cpu.txt"
     fi
 
     # --- Verify environment file exists ---
@@ -246,10 +246,10 @@ do_run() {
     local log_file="$competition_dir/agent.log"
     local task_file="$task_data_path/description.md"
 
-    local mlebench_examples="$SCRIPT_DIR/agents/ml_evolve/examples/mlebench"
+    local mlebench_examples="$SCRIPT_DIR/agents/ml_agent/examples/mlebench"
     local config_template="$mlebench_examples/task_config.yaml"
     local eval_program="$mlebench_examples/eval_program.py"
-    local evolve_script="$SCRIPT_DIR/agents/ml_evolve/ml_evolve.py"
+    local evolve_script="$SCRIPT_DIR/agents/ml_agent/ml_agent.py"
     local agent_config_path="$competition_dir/task_config.yaml"
 
     # --- Path vertification ---
@@ -410,8 +410,8 @@ do_stop() {
 do_global_cleanup() {
     info "Performing global cleanup..."
 
-    # Clean up any residual ml_evolve.py processes
-    pkill -f "agents/ml_evolve/ml_evolve.py" 2>/dev/null || true
+    # Clean up any residual ml_agent.py processes
+    pkill -f "agents/ml_agent/ml_agent.py" 2>/dev/null || true
 
     success "Cleanup complete."
 }

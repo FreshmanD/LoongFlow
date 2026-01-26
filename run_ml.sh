@@ -16,7 +16,7 @@ set -o pipefail
 
 # --- GLOBAL PATHS ---
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DEFAULT_TASK_BASE="$SCRIPT_DIR/agents/ml_evolve/examples"
+DEFAULT_TASK_BASE="$SCRIPT_DIR/agents/ml_agent/examples"
 ENV_NAME="loongflow_ml"
 
 # --- Helper Functions ---
@@ -123,12 +123,12 @@ do_init() {
     local pip_file
     if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi >/dev/null 2>&1; then
         info "Detected NVIDIA GPU, using GPU environment"
-        env_file="$SCRIPT_DIR/agents/ml_evolve/examples/environment_gpu.yaml"
-        pip_file="$SCRIPT_DIR/agents/ml_evolve/examples/requirements_gpu.txt"
+        env_file="$SCRIPT_DIR/agents/ml_agent/examples/environment_gpu.yaml"
+        pip_file="$SCRIPT_DIR/agents/ml_agent/examples/requirements_gpu.txt"
     else
         info "No GPU detected, using CPU environment"
-        env_file="$SCRIPT_DIR/agents/ml_evolve/examples/environment_cpu.yaml"
-        pip_file="$SCRIPT_DIR/agents/ml_evolve/examples/requirements_cpu.txt"
+        env_file="$SCRIPT_DIR/agents/ml_agent/examples/environment_cpu.yaml"
+        pip_file="$SCRIPT_DIR/agents/ml_agent/examples/requirements_cpu.txt"
     fi
 
     # --- Verify environment file exists ---
@@ -215,7 +215,7 @@ do_run() {
     local task_data_path="$task_dir/public"
     local pid_file="$task_dir/.agent.pid"
     local log_file="$task_dir/agent.log"
-    local evolve_script="$SCRIPT_DIR/agents/ml_evolve/ml_evolve.py"
+    local evolve_script="$SCRIPT_DIR/agents/ml_agent/ml_evolve_agent.py"
 
     # --- Verify required files exist ---
     if [ ! -f "$task_config" ]; then
@@ -368,8 +368,8 @@ do_stop() {
 do_global_cleanup() {
     info "Performing global cleanup..."
 
-    # Clean up potentially remaining ml_evolve.py processes
-    pkill -f "agents/ml_evolve/ml_evolve.py" 2>/dev/null || true
+    # Clean up potentially remaining ml_agent.py processes
+    pkill -f "agents/ml_agent/ml_agent.py" 2>/dev/null || true
 
     success "Cleanup complete."
 }

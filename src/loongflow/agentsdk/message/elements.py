@@ -145,10 +145,10 @@ class EvolveResultElement(BaseElement):
     best_score: float = Field(
         ..., description="The best score achieved in the evolution process."
     )
-    best_solution: str = Field(
+    best_solution: List[str] = Field(
         ..., description="The best solution found in the evolution process."
     )
-    evaluation: str = Field(
+    evaluation: List[str] = Field(
         ..., description="The evaluation details of the best_solution."
     )
     start_time: str = Field(..., description="The start time of the evolution process.")
@@ -161,6 +161,12 @@ class EvolveResultElement(BaseElement):
     )
     total_iterations: int = Field(
         ..., description="The total number of iterations in the evolution process."
+    )
+    total_cost: float = Field(
+        default=0.0, description="The total cost of the evolution process."
+    )
+    total_tokens: float = Field(
+        default=0.0, description="The total tokens consumed during the evolution process."
     )
 
     def get_content(self) -> Dict[str, Any]:

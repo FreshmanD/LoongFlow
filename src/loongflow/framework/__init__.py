@@ -1,13 +1,14 @@
 """Framework - Core agent architectures for LoongFlow.
 
 This module provides the core implementations for different agent paradigms:
-- EvolveAgent: Evolutionary algorithms for optimization
+- PESAgent: Evolutionary algorithms for optimization
 - ReActAgent: Standard reasoning loops
 - Base classes for building custom agents
 """
 
 from . import base
-from . import evolve
+from . import pes
 from . import react
+from . import claude_code
 
-__all__ = ["base", "evolve", "react"]
+__all__ = ["base", "pes", "react", "claude_code"]

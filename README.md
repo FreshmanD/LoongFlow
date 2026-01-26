@@ -32,7 +32,7 @@ Enable Agents to think and learn through the PES paradigm, and accumulate experi
     </a>       
 </p>
 
-[🚀 **Quick Start**](#quick-start) • [**Examples**](#loongflow-examples) • [**General-Evolve**](./agents/general_evolve) • [**ML-Evolve**](./agents/ml_evolve) • [**Discussions**](https://github.com/baidu-baige/LoongFlow/discussions)
+[🚀 **Quick Start**](#quick-start) • [**Examples**](#loongflow-examples) • [**Math-Agent**](./agents/math_agent) • [**ML-Agent**](./agents/ml_agent) • [**Discussions**](https://github.com/baidu-baige/LoongFlow/discussions)
 
 </div>
 
@@ -43,25 +43,25 @@ Enable Agents to think and learn through the PES paradigm, and accumulate experi
 
 <td width="33%" align="center" style="vertical-align: top; padding: 20px;">
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<h3 style="margin: 0; padding: 0;">🚀 <strong>General-Evolve</strong></h3>
+<h3 style="margin: 0; padding: 0;">🚀 <strong>Math-Agent</strong></h3>
 </div>
 <div align="center" style="margin: 10px 0;">
-  <img src="https://img.shields.io/badge/AGENT-General_Evolve-blue" alt="agent Badge" />
+  <img src="https://img.shields.io/badge/AGENT-math_agent-blue" alt="agent Badge" />
 </div>
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<p align="center"><strong>General Evolve Agent </strong></p>
+<p align="center"><strong>Math Problem Agent </strong></p>
 </div>
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<p align="center"><strong>Efficient</strong>,<strong>stable</strong> driving of universal algorithm design and continuous evolution.</p>
+<p align="center"><strong>Efficient</strong>,<strong>stable</strong> driving of math algorithm design and continuous evolution.</p>
 </div>
 </td>
 
 <td width="30%" align="center" style="vertical-align: top; padding: 20px;">
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
-<h3 style="margin: 0; padding: 0;">🔥 <strong>ML-Evolve</strong></h3>
+<h3 style="margin: 0; padding: 0;">🔥 <strong>ML-Agent</strong></h3>
 </div>
 <div align="center" style="margin: 10px 0;">
-  <img src="https://img.shields.io/badge/AGENT-ML_Evolve-blue" alt="agent Badge" />
+  <img src="https://img.shields.io/badge/AGENT-ml_agent-blue" alt="agent Badge" />
 </div>
 <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
 <p align="center"><strong>Machine Learning Agent</strong></p>
@@ -93,7 +93,6 @@ Enable Agents to think and learn through the PES paradigm, and accumulate experi
 
 **LoongFlow**: Inspired by Wang Yangming's "Enlightenment at Longchang".LoongFlow is dedicated to breaking the barrier between Knowing and Doing. We enable wisdom to awaken through the unity of knowledge and action, ensuring that every drop of professional expertise is transformed into powerful **AI productivity**.
 
-
 ## ✨ Why LoongFlow?
 
 ---
@@ -104,10 +103,10 @@ Enable Agents to think and learn through the PES paradigm, and accumulate experi
 <img src="./assets/images/loongflow_fr_v1.jpg" alt="LoongFlow Framework" width="80%"/>
 </p>
 
-- **Intelligent Thinking**: 
-Innovative PES (Planning-Execution-Summary) Paradigm. LoongFlow empowers Agents with structured thinking to tackle long-range complex reasoning challenges. This enables Agents to iterate through high-difficulty tasks with the rigorous mindset of a human scientist.
-- **Continuous Learning**: 
-Innovative Multi-Structure Fusion Memory. By actively generating model reasoning contexts, LoongFlow allows Agents to continuously synthesize experience during task iterations. This results in a "run-and-improve" mechanism, achieving lightweight learning and evolution without heavy retraining.
+- **Intelligent Thinking**:
+  Innovative PES (Planning-Execution-Summary) Paradigm. LoongFlow empowers Agents with structured thinking to tackle long-range complex reasoning challenges. This enables Agents to iterate through high-difficulty tasks with the rigorous mindset of a human scientist.
+- **Continuous Learning**:
+  Innovative Multi-Structure Fusion Memory. By actively generating model reasoning contexts, LoongFlow allows Agents to continuously synthesize experience during task iterations. This results in a "run-and-improve" mechanism, achieving lightweight learning and evolution without heavy retraining.
 
 We believe that the key to designing an expert-level Agent capable of solving complex problems lies in the **Agent’s thinking paradigm**. The thinking paradigm determines the complexity of problems an Agent can handle and sets the ceiling for its effectiveness. LoongFlow is built specifically for complex tasks requiring long-range reasoning, helping developers rapidly build Agents with domain-expert performance.
 
@@ -115,10 +114,10 @@ We believe that the key to designing an expert-level Agent capable of solving co
 
 <div align="center">
 
-| **Domain** | **Achievement** | **Example**                                                                                             |
-|---------------|-------------------|---------------------------------------------------------------------------------------------------------|
-| **Mathematical Challenges (Tao’s & AlphaEvolve sets)** | Outperformed the best human results on 11 problems and surpassed AlphaEvolve’s results on 7 problems, achieving the latest SOTA. | [Circle Packing](./agents/general_evolve/examples/packing_circle_in_unit_square)                        |
-| **MLE-bench (Kaggle Challenges)** | Validated across 40 Kaggle competitions, securing 22 Gold Medals. | [Stanford-Covid-Vaccine](./agents/ml_evolve/examples/mlebench/competitions/hard/stanford-covid-vaccine) |
+| **Domain**                                             | **Achievement**                                                                                                                  | **Example**                                                                                            |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Mathematical Challenges (Tao’s & AlphaEvolve sets)** | Outperformed the best human results on 11 problems and surpassed AlphaEvolve’s results on 7 problems, achieving the latest SOTA. | [Circle Packing](./agents/math_agent/examples/packing_circle_in_unit_square)                          |
+| **MLE-bench (Kaggle Challenges)**                      | Validated across 40 Kaggle competitions, securing 22 Gold Medals.                                                                | [Stanford-Covid-Vaccine](./agents/ml_agent/examples/mlebench/competitions/hard/stanford-covid-vaccine) |
 
 </div>
 
@@ -126,10 +125,9 @@ We believe that the key to designing an expert-level Agent capable of solving co
 
 <table> <tr> <th align="left">Aspect</th> <th align="left">Prompt / Tool-Based Agents</th> <th align="left">OpenEvolve-Style Evolution</th> <th align="left">LoongFlow</th> </tr> <tr> <td><strong>Core Loop</strong></td> <td>Generate → Retry</td> <td>Mutate → Select</td> <td>Plan → Execute → Summary</td> </tr> <tr> <td><strong>Reasoning Depth</strong></td> <td>Shallow</td> <td>Limited</td> <td>Long-horizon, structured</td> </tr> <tr> <td><strong>Learning from Failure</strong></td> <td>❌</td> <td>Partial</td> <td>✅ Explicit reflection</td> </tr> <tr> <td><strong>Experience Reuse</strong></td> <td>❌</td> <td>❌</td> <td>✅ Structured memory</td> </tr> <tr> <td><strong>Stability</strong></td> <td>Fragile</td> <td>Often unstable</td> <td>Stable convergence</td> </tr> <tr> <td><strong>Best Use Case</strong></td> <td>Simple automation</td> <td>Search-heavy tasks</td> <td>Expert-level problem solving</td> </tr> </table>
 
-
 ## Quick Start
 
---- 
+---
 
 ### Installation
 
@@ -156,11 +154,11 @@ pip install -e .
 
 ### Run Examples
 
-#### Run General Evolve Agent
+#### Run Math Agent
 
 ```bash
 # Config LLM: Edit task_config.yaml, recommend to use gemini-3-pro-preview or deepseek-r1-250528
-# Example: ./agents/general_evolve/examples/packing_circle_in_unit_square/task_config.yaml
+# Example: ./agents/math_agent/examples/packing_circle_in_unit_square/task_config.yaml
 # The model needs to configure providers as needed, default provider is openai. for example: openai/gemini-3-pro-preview
 llm_config:
   url: "https://xxxxxx/v1"
@@ -168,22 +166,22 @@ llm_config:
   model: "openai/gemini-3-pro-preview"
 
 # Run your first evolve task, the evolution results are in the ./output directory
-uv pip install -r ./agents/general_evolve/examples/packing_circle_in_unit_square/requirements.txt
-./run_task.sh packing_circle_in_unit_square --background
+uv pip install -r ./agents/math_agent/examples/packing_circle_in_unit_square/requirements.txt
+./run_math.sh packing_circle_in_unit_square --background
 
 # Check task log
-tail -f ./agents/general_evolve/examples/packing_circle_in_unit_square/run.log
+tail -f ./agents/math_agent/examples/packing_circle_in_unit_square/run.log
 
 # Stop task
-./run_task.sh stop packing_circle_in_unit_square
+./run_math.sh stop packing_circle_in_unit_square
 
 ```
 
-#### Run ML Evolve Agent
+#### Run ML Agent
 
 ```bash
 # Config LLM: Edit task_config.yaml, recommend to use gemini-3-pro-preview or deepseek-r1-250528
-# Example: ./agents/ml_evolve/examples/ml_example/task_config.yaml
+# Example: ./agents/ml_agent/examples/ml_example/task_config.yaml
 # The model needs to configure providers as needed, default provider is openai. for example: openai/gemini-3-pro-preview
 llm_config:
   url: "https://xxxxxx/v1"
@@ -198,14 +196,14 @@ llm_config:
 ./run_ml.sh run ml_example --background
 
 # Check task log
-tail -f ./agents/ml_evolve/examples/ml_example/agent.log
+tail -f ./agents/ml_agent/examples/ml_example/agent.log
 
 # Stop task
 ./run_ml.sh stop ml_example
 
 ```
 
---- 
+---
 
 ## How LoongFlow Works
 
@@ -216,6 +214,7 @@ LoongFlow is designed around a simple idea:
 To achieve this, LoongFlow organizes agent behavior into a thinking–learning–evolving loop.
 
 ---
+
 ### From Evolutionary Agents to Thinking Agents
 
 From Evolutionary Agents to Thinking Agents
@@ -227,8 +226,8 @@ This marked a clear step beyond static prompting.
 However, in real-world expert tasks, purely evolutionary loops often struggle because:
 
 - Exploration is blind or weakly guided
-- Long-horizon reasoning breaks easily 
-- Experience remains task-specific 
+- Long-horizon reasoning breaks easily
+- Experience remains task-specific
 - Agents converge prematurely to local optima
 
 The core issue is not evolution itself, but **the lack of a structured thinking process**.
@@ -241,37 +240,37 @@ from _evolving outputs_ to **standardizing how agents think, act, and learn**.
 
 ### PES Thinking Paradigm
 
-At the core of LoongFlow is the **PES (Plan–Execute–Summary) thinking paradigm**, inspired by how human experts conduct research: 
+At the core of LoongFlow is the **PES (Plan–Execute–Summary) thinking paradigm**, inspired by how human experts conduct research:
 
 Each agent iteration follows the same explicit structure:
 
 <table> <tr> <td width="33%">
 Plan
 
-- Understand the task and constraints  
-- Retrieve relevant past experience  
-- Design a clear, high-quality execution blueprint  
+- Understand the task and constraints
+- Retrieve relevant past experience
+- Design a clear, high-quality execution blueprint
 
 > Planning ensures generation is deliberate rather than blind.
-
 
 </td> <td width="33%">
 Execute
 
 - Perform structured experimentation
 - Verify intermediate results
-- Avoid low-value or redundant trials  
+- Avoid low-value or redundant trials
 
 > Execution becomes controlled experimentation, not guesswork.
 
 </td> <td width="33%">
 Summary
 
-- Reflect deeply on successes and failures  
-- Extract reusable insights  
-- Persist experience into structured memory  
+- Reflect deeply on successes and failures
+- Extract reusable insights
+- Persist experience into structured memory
 
 > Summary prevents agents from repeating the same mistakes.
+
 </td> </tr> </table>
 
 <p align="center">
@@ -280,7 +279,7 @@ Summary
 
 PES transforms evolution from a mutation-driven process into a **reasoning-guided improvement loop**.
 
---- 
+---
 
 ### Learning & Evolutionary Memory
 
@@ -288,12 +287,11 @@ Thinking alone is not enough. To improve over time, agents must **remember, gene
 
 LoongFlow integrates PES with a hybrid evolutionary memory system:
 
-- Multi-Island + MAP-Elites to preserve diversity 
-- Adaptive Boltzmann selection to balance exploration and exploitation 
+- Multi-Island + MAP-Elites to preserve diversity
+- Adaptive Boltzmann selection to balance exploration and exploitation
 - Global evolutionary tree memory for long-range experience retrieval
 
 This allows agents to perform **jump-style reasoning** — leveraging past discoveries to move beyond incremental local search.
-
 
 ## LoongFlow Examples
 
@@ -301,59 +299,58 @@ This allows agents to perform **jump-style reasoning** — leveraging past disco
 
 ### Mathematical Challenges (Tao’s & AlphaEvolve sets)
 
-| Problem                           | Previously best known    |     AlphaEvolve      | LoongFlow Evolve Result |     Details     |
-| --------------------------------- | -----------------------  | -------------------- | ----------------------- | --------------- |
-| Circle packing in a square        | 2.634 (Higher is Better) |  2.6358627564136983  |  **2.6359829624734026** | [packing_circle_in_unit_square](./agents/general_evolve/examples/packing_circle_in_unit_square)               |
-| Circle packing in a rectangle     | 2.364 (Higher is Better) |  2.3658321334167627  |  **2.365832229500823**  | [packing_circle_in_rectangle](./agents/general_evolve/examples/packing_circle_in_rectangle)                   |
-| Packing hexagons in hexagons      | 3.943 (Lower is Better)  |  3.930092            |  **3.928906855463712**  | [packing_hexagons_in_hexagons](./agents/general_evolve/examples/packing_hexagons_in_hexagons)                 |
-| Max to min ratios                 | 12.89（Lower is Better） |  12.88926611203463   |  **12.889243547212832** | [max_to_min_ratios](./agents/general_evolve/examples/max_to_min_ratios)                                       |
-| Minimum Overlap Problem           | 0.380927 (Lower is Better) |  0.380924      | **0.3809137564083654**    | [minimum_overlap_problem](./agents/general_evolve/examples/minimum_overlap_problem)                           |
-| An uncertainty inequality         | 0.3523 (Lower is Better)   |  0.35209910442252773  |  **0.352099104421844**   | [uncertainty_inequality](./agents/general_evolve/examples/uncertainty_inequality)                             |
-| Second autocorrelation inequality | 0.88922 (Higher is Better) |  0.8962799441554083   | **0.9027021077220739**  | [second_autocorrelation_inequality](./agents/general_evolve/examples/second_autocorrelation_inequality)       |
-| First autocorrelation inequality  | 1.5098 (Lower is Better)   |  1.5052939684401607   |  1.509527314861778   | [first_autocorrelation_inequality](./agents/general_evolve/examples/first_autocorrelation_inequality)         |
-| Sums differences problems         | 1.059793 (Higher is Better) | 1.1219357374860444   |  1.103534711409646   | [sums_and_differences_problems_1](./agents/general_evolve/examples/sums_and_differences_problems_1)           |
-| heilbronn triangles               | 0.036（Higher is Better）|  0.036529889880030156  | 0.0365298898793351    | [heilbronn_problem_for_triangles](./agents/general_evolve/examples/heilbronn_problem_for_triangles)           |
-| heilbronn convex regions          | 0.0306（Higher is Better） |  0.030936889034895654  | 0.030900663674639613   | [heilbronn_problem_for_convex_regions](./agents/general_evolve/examples/heilbronn_problem_for_convex_regions) |
+| Problem                           | Previously best known       | AlphaEvolve          | LoongFlow Evolve Result | Details                                                                                                    |
+| --------------------------------- | --------------------------- | -------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Circle packing in a square        | 2.634 (Higher is Better)    | 2.6358627564136983   | **2.6359829624734026**  | [packing_circle_in_unit_square](./agents/math_agent/examples/packing_circle_in_unit_square)               |
+| Circle packing in a rectangle     | 2.364 (Higher is Better)    | 2.3658321334167627   | **2.365832229500823**   | [packing_circle_in_rectangle](./agents/math_agent/examples/packing_circle_in_rectangle)                   |
+| Packing hexagons in hexagons      | 3.943 (Lower is Better)     | 3.930092             | **3.928906855463712**   | [packing_hexagons_in_hexagons](./agents/math_agent/examples/packing_hexagons_in_hexagons)                 |
+| Max to min ratios                 | 12.89（Lower is Better）    | 12.88926611203463    | **12.889243547212832**  | [max_to_min_ratios](./agents/math_agent/examples/max_to_min_ratios)                                       |
+| Minimum Overlap Problem           | 0.380927 (Lower is Better)  | 0.380924             | **0.3809137564083654**  | [minimum_overlap_problem](./agents/math_agent/examples/minimum_overlap_problem)                           |
+| An uncertainty inequality         | 0.3523 (Lower is Better)    | 0.35209910442252773  | **0.352099104421844**   | [uncertainty_inequality](./agents/math_agent/examples/uncertainty_inequality)                             |
+| Second autocorrelation inequality | 0.88922 (Higher is Better)  | 0.8962799441554083   | **0.9027021077220739**  | [second_autocorrelation_inequality](./agents/math_agent/examples/second_autocorrelation_inequality)       |
+| First autocorrelation inequality  | 1.5098 (Lower is Better)    | 1.5052939684401607   | 1.509527314861778       | [first_autocorrelation_inequality](./agents/math_agent/examples/first_autocorrelation_inequality)         |
+| Sums differences problems         | 1.059793 (Higher is Better) | 1.1219357374860444   | 1.103534711409646       | [sums_and_differences_problems_1](./agents/math_agent/examples/sums_and_differences_problems_1)           |
+| heilbronn triangles               | 0.036（Higher is Better）   | 0.036529889880030156 | 0.0365298898793351      | [heilbronn_problem_for_triangles](./agents/math_agent/examples/heilbronn_problem_for_triangles)           |
+| heilbronn convex regions          | 0.0306（Higher is Better）  | 0.030936889034895654 | 0.030900663674639613    | [heilbronn_problem_for_convex_regions](./agents/math_agent/examples/heilbronn_problem_for_convex_regions) |
 
 Across 11 challenges in geometry and algebra, LoongFlow outperformed all known best results and surpassed AlphaEvolve on 7 specific problems, achieving the latest SOTA.
 
 ### MLE-bench (Kaggle Challenges)
 
-| Problem                                  | LoongFlow Evolve Result | Details                                          |
-| ---------------------------------------- | ----------------------- | ------------------------------------------------ |
-| aerial-cactus-identification             | 🥇 Gold                 | [aerial-cactus-identification](./agents/ml_evolve/examples/mlebench/competitions/simple/aerial-cactus-identification) |
-| denoising-dirty-documents                | 🥇 Gold                 | [denoising-dirty-documents](./agents/ml_evolve/examples/mlebench/competitions/simple/denoising-dirty-documents) |
-| detecting-insults-in-social-commentary   | 🥇 Gold                 | [detecting-insults-in-social-commentary](./agents/ml_evolve/examples/mlebench/competitions/simple/detecting-insults-in-social-commentary) |
-| dogs-vs-cats-redux-kernels-edition       | 🥇 Gold                 | [dogs-vs-cats-redux-kernels-edition](./agents/ml_evolve/examples/mlebench/competitions/simple/dogs-vs-cats-redux-kernels-edition) |
-| histopathologic-cancer-detection         | 🥇 Gold                 | [histopathologic-cancer-detection](./agents/ml_evolve/examples/mlebench/competitions/simple/histopathologic-cancer-detection) |
-| nomad2018-predict-transparent-conductors | 🥇 Gold                 | [nomad2018-predict-transparent-conductors](./agents/ml_evolve/examples/mlebench/competitions/simple/nomad2018-predict-transparent-conductors) |
-| plant-pathology-2020-fgvc7               | 🥇 Gold                 | [plant-pathology-2020-fgvc7](./agents/ml_evolve/examples/mlebench/competitions/simple/plant-pathology-2020-fgvc7) |
-| tabular-playground-series-dec-2021       | 🥇 Gold                 | [tabular-playground-series-dec-2021](./agents/ml_evolve/examples/mlebench/competitions/simple/tabular-playground-series-dec-2021) |
-| the-icml-2013-whale-challenge-right-whale-redux   | 🥇 Gold        | [the-icml-2013-whale-challenge-right-whale-redux](./agents/ml_evolve/examples/mlebench/competitions/simple/the-icml-2013-whale-challenge-right-whale-redux) |
-| google-quest-challenge          | 🥇 Gold                 | [google-quest-challenge](./agents/ml_evolve/examples/mlebench/competitions/medium/google-quest-challenge) |
-| plant-pathology-2021-fgvc8      | 🥇 Gold                 | [plant-pathology-2021-fgvc8](./agents/ml_evolve/examples/mlebench/competitions/medium/plant-pathology-2021-fgvc8) |
-| us-patent-phrase-to-phrase-matching     | 🥇 Gold                 | [us-patent-phrase-to-phrase-matching](./agents/ml_evolve/examples/mlebench/competitions/medium/us-patent-phrase-to-phrase-matching) |
-| predict-volcanic-eruptions-ingv-oe      | 🥇 Gold                 | [predict-volcanic-eruptions-ingv-oe](./agents/ml_evolve/examples/mlebench/competitions/hard/predict-volcanic-eruptions-ingv-oe) |
-| stanford-covid-vaccine                  | 🥇 Gold                 | [stanford-covid-vaccine](./agents/ml_evolve/examples/mlebench/competitions/hard/stanford-covid-vaccine) |
+| Problem                                         | LoongFlow Evolve Result | Details                                                                                                                                                    |
+| ----------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| aerial-cactus-identification                    | 🥇 Gold                 | [aerial-cactus-identification](./agents/ml_agent/examples/mlebench/competitions/simple/aerial-cactus-identification)                                       |
+| denoising-dirty-documents                       | 🥇 Gold                 | [denoising-dirty-documents](./agents/ml_agent/examples/mlebench/competitions/simple/denoising-dirty-documents)                                             |
+| detecting-insults-in-social-commentary          | 🥇 Gold                 | [detecting-insults-in-social-commentary](./agents/ml_agent/examples/mlebench/competitions/simple/detecting-insults-in-social-commentary)                   |
+| dogs-vs-cats-redux-kernels-edition              | 🥇 Gold                 | [dogs-vs-cats-redux-kernels-edition](./agents/ml_agent/examples/mlebench/competitions/simple/dogs-vs-cats-redux-kernels-edition)                           |
+| histopathologic-cancer-detection                | 🥇 Gold                 | [histopathologic-cancer-detection](./agents/ml_agent/examples/mlebench/competitions/simple/histopathologic-cancer-detection)                               |
+| nomad2018-predict-transparent-conductors        | 🥇 Gold                 | [nomad2018-predict-transparent-conductors](./agents/ml_agent/examples/mlebench/competitions/simple/nomad2018-predict-transparent-conductors)               |
+| plant-pathology-2020-fgvc7                      | 🥇 Gold                 | [plant-pathology-2020-fgvc7](./agents/ml_agent/examples/mlebench/competitions/simple/plant-pathology-2020-fgvc7)                                           |
+| tabular-playground-series-dec-2021              | 🥇 Gold                 | [tabular-playground-series-dec-2021](./agents/ml_agent/examples/mlebench/competitions/simple/tabular-playground-series-dec-2021)                           |
+| the-icml-2013-whale-challenge-right-whale-redux | 🥇 Gold                 | [the-icml-2013-whale-challenge-right-whale-redux](./agents/ml_agent/examples/mlebench/competitions/simple/the-icml-2013-whale-challenge-right-whale-redux) |
+| google-quest-challenge                          | 🥇 Gold                 | [google-quest-challenge](./agents/ml_agent/examples/mlebench/competitions/medium/google-quest-challenge)                                                   |
+| plant-pathology-2021-fgvc8                      | 🥇 Gold                 | [plant-pathology-2021-fgvc8](./agents/ml_agent/examples/mlebench/competitions/medium/plant-pathology-2021-fgvc8)                                           |
+| us-patent-phrase-to-phrase-matching             | 🥇 Gold                 | [us-patent-phrase-to-phrase-matching](./agents/ml_agent/examples/mlebench/competitions/medium/us-patent-phrase-to-phrase-matching)                         |
+| predict-volcanic-eruptions-ingv-oe              | 🥇 Gold                 | [predict-volcanic-eruptions-ingv-oe](./agents/ml_agent/examples/mlebench/competitions/hard/predict-volcanic-eruptions-ingv-oe)                             |
+| stanford-covid-vaccine                          | 🥇 Gold                 | [stanford-covid-vaccine](./agents/ml_agent/examples/mlebench/competitions/hard/stanford-covid-vaccine)                                                     |
 
 Validated across 40 Kaggle competitions within the MLE-bench, securing 22 Gold Medals. The full results will be released upon the completion of all remaining competitions.
 
 ### Others
 
-Additionally, validation was conducted on problems such as [mathematical puzzles](./agents/general_evolve/examples/math_flip) and [MOE load balancing algorithms](./agents/general_evolve/examples/moe_lb_time)，Detailed examples can be found in [Examples](./agents/general_evolve/examples).
-
+Additionally, validation was conducted on problems such as [mathematical puzzles](./agents/math_agent/examples/math_flip) and [MOE load balancing algorithms](./agents/math_agent/examples/moe_lb_time)，Detailed examples can be found in [Examples](./agents/math_agent/examples).
 
 ## 🧩 Advanced Usage
 
 ---
 
-### EvolveAgent
+### PESAgent
 
 ```python
-from loongflow.framework.evolve import EvolveAgent
+from loongflow.framework.pes import PESAgent
 
 # Config evolve agent
-agent = EvolveAgent(
+agent = PESAgent(
     config=config,
     checkpoint_path=checkpoint_path,
 )
@@ -367,7 +364,7 @@ agent.register_summary_worker("summary", SummaryAgent)
 result = await agent()
 ```
 
-For more details, please refer to [EvolveAgent](./src/evolux/evolve/README.md)
+For more details, please refer to [PESAgent](./src/loongflow/framework/pes/README.md)
 
 ### ReActAgent
 
@@ -387,7 +384,7 @@ agent = ReActAgent.create_default(model=model, sys_prompt=sys_prompt, toolkit=to
 result = await agent(message)
 ```
 
-For more details, please refer to [ReActAgent](./src/evolux/react/README.md)
+For more details, please refer to [ReActAgent](./src/loongflow/framework/react/README.md)
 
 ## Visualization
 
@@ -397,7 +394,7 @@ For more details, please refer to [ReActAgent](./src/evolux/react/README.md)
 
 ```
 # Launch visualization server
-python agents/general_evolve/visualizer/visualizer.py --port 8888 --checkpoint-path output-circle-packing/database/checkpoints
+python agents/math_agent/visualizer/visualizer.py --port 8888 --checkpoint-path output-circle-packing/database/checkpoints
 ```
 
 **Features:**
@@ -429,6 +426,7 @@ LoongFlow builds on these ideas but introduces a higher-level abstraction:
 **A structured thinking and learning paradigm inspired by human experts.**
 
 Rather than optimizing mutations, LoongFlow focuses on how agents plan, execute, reflect, and accumulate experience across iterations.
+
 </details>
 
 <details>
@@ -443,15 +441,14 @@ Just set the `llm_config` in your config to point to your endpoint.
 
 </details>
 
-
 ## 🤝 Contribution
 
 We welcome contributions! Here's how to get started:
 
 1. 🍴 Fork the repository
 2. 🌿 Create your feature branch: git checkout -b feat-amazing-feature
-3. ✨ Add your changes and tests 
-4. 📝 Commit with a clear message 
+3. ✨ Add your changes and tests
+4. 📝 Commit with a clear message
 5. 🚀 Push and create a Pull Request
 
 Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
@@ -461,7 +458,7 @@ Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of cond
 Welcome to join our community on
 
 | [Discord](https://discord.gg/YSfdrC8HJh)                                | Wechat                                                                 |
-|-------------------------------------------------------------------------|------------------------------------------------------------------------|
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | <img src="./assets/images/discord_invite.png" width="200" height="200"> | <img src="./assets/images/wechat_invite.jpg" width="200" height="200"> |
 
 ## 📜 License
@@ -469,17 +466,18 @@ Welcome to join our community on
 LoongFlow is licensed under the Apache License 2.0.
 
 ## 📚 Citation
+
 If you find this work useful, please consider citing:
 
 ```bibtex
 @misc{LoongFlow2025,
-      title={LoongFlow: Directed Evolutionary Search via a Cognitive Plan-Execute-Summarize Paradigm}, 
+      title={LoongFlow: Directed Evolutionary Search via a Cognitive Plan-Execute-Summarize Paradigm},
       author={Chunhui Wan and Xunan Dai and Zhuo Wang and Minglei Li and Yanpeng Wang and Yinan Mao and Yu Lan and Zhiwen Xiao},
       year={2025},
       eprint={2512.24077},
       archivePrefix={arXiv},
       primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2512.24077}, 
+      url={https://arxiv.org/abs/2512.24077},
 }
 ```
 
@@ -491,6 +489,6 @@ If you find this work useful, please consider citing:
 
 **Maintained by the LoongFlow community**
 
-*If LoongFlow helps you, please consider starring this repository.*
+_If LoongFlow helps you, please consider starring this repository._
 
 </div>
