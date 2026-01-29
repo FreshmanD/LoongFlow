@@ -3,8 +3,6 @@
 This file define
 """
 
-from pathlib import Path
-
 import pytest
 
 from agents.general_agent.evaluator import GeneralEvaluator
@@ -42,11 +40,6 @@ async def test_run():
     )
 
     evaluate_code = ""
-    with open(
-        "/Users/daixunan/baidu/agent/LoongFlow/tests/agents/general_agent/eval_program.py",
-        "r",
-    ) as f:
-        evaluate_code = f.read()
 
     evaluator_config.evaluate_code = evaluate_code
 
