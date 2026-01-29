@@ -43,7 +43,9 @@ class LLMConfig(BaseModel):
     model: str = Field(
         ..., description="The specific model name to use, e.g., 'gpt-4o'."
     )
-    url: str = Field(default=None, description="The API endpoint URL for the language model.")
+    url: str = Field(
+        default=None, description="The API endpoint URL for the language model."
+    )
     api_key: str = Field(default=None, description="The API key for authentication.")
     model_provider: Optional[str] = Field(
         default=None,
@@ -56,7 +58,9 @@ class LLMConfig(BaseModel):
         description="Controls randomness. Lower is more deterministic.",
     )
     context_length: int = Field(
-        default=65536, gt=0, description="The maximum context length of tokens for the model."
+        default=65536,
+        gt=0,
+        description="The maximum context length of tokens for the model.",
     )
     max_tokens: int = Field(
         default=16384, gt=0, description="The maximum number of tokens to generate."
@@ -76,10 +80,6 @@ class LLMConfig(BaseModel):
         default=0.0,
         description="Price per token for prompt requests.",
     )
-    claude_agent_options: Optional[Dict[str, Any]] = Field(
-        default={},
-        description="Additional options for Claude Agent SDK.",
-    )
 
 
 class EvaluatorConfig(BaseModel):
@@ -90,12 +90,13 @@ class EvaluatorConfig(BaseModel):
         description="LLM configuration for the evaluator. Inherits from global if not set.",
     )
     evaluate_code: str = Field(
-        ..., description="The Python code string used to evaluate the generated output."
+        default="",
+        description="The Python code string used to evaluate the generated output.",
     )
     workspace_path: Optional[str] = Field(
         default=None,
         description="Path to the workspace for storing evaluation artifacts. "
-                    "If not set, defaults to a subdirectory within the root workspace.",
+        "If not set, defaults to a subdirectory within the root workspace.",
     )
     timeout: int = Field(
         default=1800,
@@ -105,6 +106,10 @@ class EvaluatorConfig(BaseModel):
     evolve_target: Optional[str] = Field(
         default=None,
         description="The specific target or goal for the evolution process, if applicable.",
+    )
+    agent: Dict[str, Any] = Field(
+        default={},
+        description="A dictionary of all available agent configurations.",
     )
 
 
@@ -142,7 +147,7 @@ class DatabaseConfig(BaseModel):
     output_path: Optional[str] = Field(
         default=None,
         description="Path to the directory for database outputs (e.g., checkpoints). "
-                    "If not set, defaults to a subdirectory within the root workspace.",
+        "If not set, defaults to a subdirectory within the root workspace.",
     )
 
     def to_dict(self) -> dict:
@@ -167,6 +172,7 @@ class DatabaseConfig(BaseModel):
 
 class EvolveConfig(BaseModel):
     """Evolve configuration class."""
+
     task_name: str = Field(
         default="evolve",
         description="Name of the task being evolved. Used for logging purposes.",
@@ -191,7 +197,7 @@ class EvolveConfig(BaseModel):
     workspace_path: Optional[str] = Field(
         default=None,
         description="Path to the main workspace for the evolution process. "
-                    "If not set, defaults to the root workspace path.",
+        "If not set, defaults to the root workspace path.",
     )
     database: DatabaseConfig = Field(..., description="Configuration for the database.")
     evaluator: EvaluatorConfig = Field(

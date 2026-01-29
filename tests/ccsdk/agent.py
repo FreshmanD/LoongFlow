@@ -1,14 +1,14 @@
 import asyncio
-import os
 
 from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage, ResultMessage
 
 async def main():
     # Agentic loop: streams messages as Claude works
     async for message in query(
-        prompt="Review tests/ccsdk/utils.py for bugs that would cause crashes. Fix any issues you find.",
+        prompt="请你利用skill-creator帮我生成一个关于如何使用LoongFlow框架搭建专家Agent的Skill。",
         options=ClaudeAgentOptions(
-            allowed_tools=["Read", "Edit", "Glob"],  # Tools Claude can use
+            setting_sources=["project"],
+            allowed_tools=["Skill"],  # Tools Claude can use
             permission_mode="acceptEdits",  # Auto-approve file edits
         ),
     ):

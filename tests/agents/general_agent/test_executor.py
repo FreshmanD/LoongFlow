@@ -5,17 +5,17 @@ This file define
 
 import pytest
 
-from agents.general_agent.planner import GeneralPlanAgent
-from loongflow.framework.pes.context import Context, LLMConfig
-from loongflow.framework.pes.context.config import DatabaseConfig
-from loongflow.framework.pes.database import EvolveDatabase
-from loongflow.framework.pes.planner import Planner
+from agents.general_agent.evaluator import GeneralEvaluator
+from agents.general_agent.executor import GeneralExecuteAgent
+from loongflow.agentsdk.message import Message, MimeType
+from loongflow.framework.pes.context import Context, LLMConfig, EvaluatorConfig
+from loongflow.framework.pes.executor import Executor
 from loongflow.framework.pes.register import register_worker
 
 
 @pytest.mark.asyncio
 async def test_run():
-    """test general planner"""
+    """test general executor"""
     full_config = {
         "llm_config": LLMConfig(
             model="deepseek-v3.2",
@@ -24,15 +24,30 @@ async def test_run():
                 "max_thinking_tokens": 10000,
             },
         ),
-        "skills": ["skill-creator"],
+        "max_rounds": 1,
     }
-    register_worker("general_planner", "planner", GeneralPlanAgent)
+    register_worker("general_executor", "executor", GeneralExecuteAgent)
 
-    db = EvolveDatabase.create_database(DatabaseConfig())
+    evaluator_config = EvaluatorConfig(
+        llm_config=LLMConfig(
+            model="deepseek-v3.2",
+            claude_agent_options={
+                "max_turns": 10,
+                "max_thinking_tokens": 10000,
+            },
+        ),
+        timeout=1800,
+    )
 
-    planner = Planner("general_planner", full_config, db)
+    evaluate_code = ""
 
-    message = await planner.run(
+    evaluator_config.evaluate_code = evaluate_code
+
+    evaluator = GeneralEvaluator(evaluator_config)
+
+    executor = Executor("general_executor", full_config, evaluator, None)
+
+    message = await executor.run(
         context=Context(
             base_path="./output",
             task="""    Act as an expert software developer. Your task is to iteratively improve the provided codebase. Your task is to write a search function to find a way to place num_circles disjoint disks into the unit square [0,1] x [0,1] in such a way that the sum of their radii is as big as possible.
@@ -57,7 +72,13 @@ async def test_run():
     - The run_packing results must be verified by the check_construction function provided in the initial code
     - You have 1000 seconds of runtime""",
         ),
-        message=None,
+        message=Message.from_content(
+            data={
+                "best_plan_file_path": "./output/32160dc4-b89e-44af-9061-d896128cbd93/0/planner/best_plan.md",
+                "parent_info_file_path": "./output/32160dc4-b89e-44af-9061-d896128cbd93/0/planner/parent_info.json",
+            },
+            mime_type=MimeType.APPLICATION_JSON,
+        ),
     )
 
     print(message)

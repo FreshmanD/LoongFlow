@@ -5,17 +5,18 @@ This file define
 
 import pytest
 
-from agents.general_agent.planner import GeneralPlanAgent
+from agents.general_agent.summary import GeneralSummaryAgent
+from loongflow.agentsdk.message import Message, MimeType
 from loongflow.framework.pes.context import Context, LLMConfig
 from loongflow.framework.pes.context.config import DatabaseConfig
 from loongflow.framework.pes.database import EvolveDatabase
-from loongflow.framework.pes.planner import Planner
 from loongflow.framework.pes.register import register_worker
+from loongflow.framework.pes.summary import Summary
 
 
 @pytest.mark.asyncio
 async def test_run():
-    """test general planner"""
+    """test general summary"""
     full_config = {
         "llm_config": LLMConfig(
             model="deepseek-v3.2",
@@ -26,13 +27,13 @@ async def test_run():
         ),
         "skills": ["skill-creator"],
     }
-    register_worker("general_planner", "planner", GeneralPlanAgent)
+    register_worker("general_summary", "summary", GeneralSummaryAgent)
 
     db = EvolveDatabase.create_database(DatabaseConfig())
 
-    planner = Planner("general_planner", full_config, db)
+    summary = Summary("general_summary", full_config, db)
 
-    message = await planner.run(
+    message = await summary.run(
         context=Context(
             base_path="./output",
             task="""    Act as an expert software developer. Your task is to iteratively improve the provided codebase. Your task is to write a search function to find a way to place num_circles disjoint disks into the unit square [0,1] x [0,1] in such a way that the sum of their radii is as big as possible.
@@ -57,7 +58,15 @@ async def test_run():
     - The run_packing results must be verified by the check_construction function provided in the initial code
     - You have 1000 seconds of runtime""",
         ),
-        message=None,
+        message=Message.from_content(
+            data={
+                "best_plan_file_path": "./output/32160dc4-b89e-44af-9061-d896128cbd93/0/planner/best_plan.md",
+                "parent_info_file_path": "./output/32160dc4-b89e-44af-9061-d896128cbd93/0/planner/parent_info.json",
+                "best_solution_file_path": "./output/e8f57b67-8e3c-441e-abb0-29dfa197ea31/0/executor/best_solution.md",
+                "best_evaluation_file_path": "./output/e8f57b67-8e3c-441e-abb0-29dfa197ea31/0/executor/best_evaluation.json",
+            },
+            mime_type=MimeType.APPLICATION_JSON,
+        ),
     )
 
     print(message)

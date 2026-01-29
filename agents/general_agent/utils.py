@@ -132,17 +132,39 @@ def convert_function_tool_to_custom_tool(tool: FunctionTool) -> Dict[str, Any]:
 
     # Create async wrapper that calls FunctionTool.arun and converts response
     async def wrapper(args: Dict[str, Any]) -> Dict[str, Any]:
-        response = await tool.arun(args=args)
-        # Convert ToolResponse to ClaudeCodeAgent expected format
-        if response.content:
-            result_data = response.content[0].data
-            if isinstance(result_data, str):
-                text = result_data
+        # Note: ClaudeCodeAgent passes tool_context separately, but FunctionTool.arun
+        # requires it as a parameter. Since we don't have access to tool_context here,
+        # we call arun without it and handle potential errors.
+        try:
+            response = await tool.arun(args=args)
+            # Convert ToolResponse to ClaudeCodeAgent expected format
+            if response.content:
+                result_data = response.content[0].data
+                if isinstance(result_data, str):
+                    text = result_data
+                else:
+                    text = json.dumps(result_data, indent=2)
             else:
-                text = json.dumps(result_data, indent=2)
-        else:
-            text = "No result"
-        return {"content": [{"type": "text", "text": text}]}
+                text = "No result"
+            return {"content": [{"type": "text", "text": text}]}
+        except Exception as e:
+            # If arun fails (e.g., due to missing tool_context), fallback to calling the function directly
+            logger.warning(
+                f"Tool arun failed for {tool.name}, falling back to direct call: {e}"
+            )
+            try:
+                # Call the underlying function directly
+                result = await tool.func(**args)
+                return {"content": [{"type": "text", "text": str(result)}]}
+            except Exception as fallback_error:
+                return {
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"Tool execution failed: {fallback_error}",
+                        }
+                    ]
+                }
 
     return {
         "function": wrapper,
@@ -170,3 +192,66 @@ def build_custom_tools_from_function_tools(
     for tool in function_tools:
         custom_tools[tool.name] = convert_function_tool_to_custom_tool(tool)
     return custom_tools
+
+
+def format_loaded_skills(skill_names: Optional[List[str]], work_dir: str) -> str:
+    """
+    Format loaded skills information for prompt injection.
+
+    This function reads the SKILL.md files from the workspace and extracts
+    the name and description from the YAML frontmatter to provide context
+    to the agent about available skills.
+
+    Args:
+        skill_names: List of skill names that were loaded, or None if no skills
+        work_dir: The workspace directory where skills were loaded
+
+    Returns:
+        A formatted string describing available skills for prompt injection.
+        Returns default message if no skills are loaded.
+    """
+    from loongflow.framework.claude_code import DEFAULT_LOADED_SKILLS
+
+    if not skill_names:
+        return DEFAULT_LOADED_SKILLS
+
+    skills_info = []
+    skills_dir = Path(work_dir) / ".claude" / "skills"
+
+    for skill_name in skill_names:
+        skill_md_path = skills_dir / skill_name / "SKILL.md"
+
+        if skill_md_path.exists():
+            try:
+                content = skill_md_path.read_text(encoding="utf-8")
+                # Extract YAML frontmatter (between --- markers)
+                if content.startswith("---"):
+                    parts = content.split("---", 2)
+                    if len(parts) >= 3:
+                        frontmatter = parts[1].strip()
+                        # Parse simple YAML-like frontmatter
+                        name = skill_name
+                        description = ""
+                        for line in frontmatter.split("\n"):
+                            if line.startswith("name:"):
+                                name = line.split(":", 1)[1].strip().strip('"\'')
+                            elif line.startswith("description:"):
+                                description = line.split(":", 1)[1].strip().strip('"\'')
+
+                        skills_info.append(f"- **{name}**: {description}")
+                        continue
+            except Exception as e:
+                logger.warning(f"Failed to read SKILL.md for '{skill_name}': {e}")
+
+            # Fallback if parsing fails
+            skills_info.append(f"- **{skill_name}**: Check `.claude/skills/{skill_name}/SKILL.md` for details")
+        else:
+            skills_info.append(f"- **{skill_name}**: Skill loaded but SKILL.md not found")
+
+    if not skills_info:
+        return DEFAULT_LOADED_SKILLS
+
+    result = "The following skills are available in this workspace:\n"
+    result += "\n".join(skills_info)
+    result += "\n\nTo use a skill, read its SKILL.md file for detailed instructions."
+    return result

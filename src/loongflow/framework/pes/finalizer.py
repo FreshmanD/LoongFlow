@@ -106,6 +106,8 @@ class LoongFlowFinalizer(Finalizer):
                 cost_time=cost_time,
                 last_iteration=best_iteration,
                 total_iterations=total_iterations,
+                total_cost=total_cost,
+                total_tokens=total_tokens,
             )
 
             print(

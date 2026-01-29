@@ -414,19 +414,21 @@ class PESAgent(AgentBase):
         )
 
         # If initial score is not set and the first iteration, evaluate the initial code and set it.
-        if self.config.evolve.initial_score is None and self._current_iteration == 0:
+        if self.config.evolve.initial_code and self.config.evolve.evaluator.evaluate_code and self.config.evolve.initial_score is None and self._current_iteration == 0:
             init_evaluation = await self.evaluator.evaluate(init_solution_message)
             self.config.evolve.initial_score = init_evaluation.score
             self.config.evolve.initial_evaluation = json.dumps(
                 init_evaluation.to_dict(), ensure_ascii=False
             )
 
-        if self.config.evolve.initial_score >= self.target_score:
+        if self.config.evolve.initial_score and self.config.evolve.initial_score >= self.target_score:
             self.logger.info(f"Initial solution meets target score.")
             final_message = await self.finalizer.finalize(
                 self.database,
                 start_time=start_time,
                 was_interrupted=was_interrupted_flag,
+                total_cost=total_cost,
+                total_tokens=total_tokens,
             )
             return final_message
 
@@ -533,6 +535,31 @@ class PESAgent(AgentBase):
             else:
                 self.logger.info("Main loop finished. Cleaning up running tasks...")
             await self._cleanup_tasks()
+
+        # Calculate total tokens and cost (ensure this happens regardless of exit path)
+        if total_tokens == 0.0 and total_cost == 0.0:
+            completion_tokens = self.total_completion_tokens
+            prompt_tokens = self.total_prompt_tokens
+            total_tokens = completion_tokens + prompt_tokens
+
+            # Calculate cost if llm_config has price information
+            if self.config.llm_config:
+                completion_price = getattr(self.config.llm_config, 'completion_token_price', 0) or 0
+                prompt_price = getattr(self.config.llm_config, 'prompt_token_price', 0) or 0
+                completion_cost = (completion_tokens / 1000) * completion_price
+                prompt_cost = (prompt_tokens / 1000) * prompt_price
+                total_cost = completion_cost + prompt_cost
+            else:
+                completion_cost = 0.0
+                prompt_cost = 0.0
+                total_cost = 0.0
+
+            self.logger.info(
+                f"Final token usage - "
+                f"Completion tokens: {completion_tokens}, cost: {round(completion_cost, 6)}. "
+                f"Prompt tokens: {prompt_tokens}, cost: {round(prompt_cost, 6)}. "
+                f"Total tokens: {total_tokens}, Total Cost: {round(total_cost, 6)}."
+            )
 
         self.logger.info("Evolution process concluded. Invoking Finalizer.")
         final_message = await self.finalizer.finalize(

@@ -156,7 +156,6 @@ done
 COMMAND_ARRAY=(
   "python" "${MAIN_SCRIPT}"
   "--config" "${CONFIG_FILE}"
-  "--eval-file" "${EVAL_FILE}"
   "${PYTHON_ARGS[@]}"
 )
 
