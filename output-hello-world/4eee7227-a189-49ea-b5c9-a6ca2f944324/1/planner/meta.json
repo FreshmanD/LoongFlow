@@ -1,0 +1,11 @@
+{
+  "trace_id": "c937ac939c12",
+  "status": "success",
+  "tools_used": [
+    "Tool: Write",
+    "Tool: Write"
+  ],
+  "input_tokens": 61141,
+  "output_tokens": 5038,
+  "duration_ms": 153848
+}

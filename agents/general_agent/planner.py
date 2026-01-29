@@ -8,11 +8,12 @@ import json
 import os
 from typing import Any
 
-from agents.general_agent.common import ClaudeAgentConfig
+from agents.general_agent.common import ClaudeAgentConfig, Details_format
+from agents.general_agent.gpu_utilize_prompt import GPU_PLANNER_SYSTEM, GPU_PLANNER_USER
+from agents.general_agent.loc_code_prompt import CODE_PLANNER_SYSTEM, CODE_PLANNER_USER
 from agents.general_agent.utils import build_custom_tools_from_function_tools, format_loaded_skills
 from loongflow.agentsdk.logger import get_logger
 from loongflow.agentsdk.message import Message, MimeType, ContentElement
-from loongflow.framework.claude_code import GENERAL_PLANNER_USER, GENERAL_PLANNER_SYSTEM
 from loongflow.framework.pes.context import Context, Workspace
 from loongflow.framework.pes.database import EvolveDatabase
 from loongflow.framework.pes.register import Worker
@@ -101,7 +102,7 @@ class GeneralPlanAgent(Worker):
             work_dir=work_dir,
             tool_list=self.config.build_in_tools,
             custom_tools=database_tools,
-            system_prompt=self.config.system_prompt or GENERAL_PLANNER_SYSTEM,
+            system_prompt=CODE_PLANNER_SYSTEM,
             permission_mode=self.config.permission_mode or "acceptEdits",
             setting_sources=["project"],
             max_turns=self.config.max_turns,
@@ -137,7 +138,7 @@ class GeneralPlanAgent(Worker):
         # Format loaded skills information for prompt
         loaded_skills_info = format_loaded_skills(self.config.skills, work_dir)
 
-        user_prompt = GENERAL_PLANNER_USER.format(
+        user_prompt = CODE_PLANNER_USER.format(
             task_info=context.task,
             parent_solution=parent_json,
             workspace=f"{work_dir} (absolute path)",
@@ -145,6 +146,7 @@ class GeneralPlanAgent(Worker):
             parent_island=parent.get("island_id") if parent else 0,
             best_plan_path=f"{best_plan_path_for_claude} (absolute path)",
             loaded_skills=loaded_skills_info,
+            details_format=Details_format,
         )
 
         # Execute planning - Claude should use Write tool to save plan to best_plan_path

@@ -49,7 +49,7 @@ summarizers:
 evolve:
   # Task description, is the core objective of the entire evolution process
   task: |
-    Help me write a documentation for the LoongFlow project.
+    LoongFlow框架在启动general_agent以后，如果使用ctrl + c命令强制退出的话，有的时候会卡住，导致一直不退出；有的时候就可以正常退出。
            
   # Name of the component selected for current run
   planner_name: "general_planner"
@@ -58,7 +58,7 @@ evolve:
 
   # Core parameters for the evolution process
   max_iterations: 200
-  target_score: 0.5
+  target_score: 1.0
   concurrency: 1
 
   # Evaluator configuration

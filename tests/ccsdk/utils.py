@@ -6,3 +6,9 @@ def calculate_average(numbers):
 
 def get_user_name(user):
     return user["name"].upper()
+
+def main():
+    calculate_average([])
+
+if __name__ == "__main__":
+    main()

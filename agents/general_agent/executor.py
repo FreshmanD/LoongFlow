@@ -15,16 +15,19 @@ from typing import Any, Optional, List, Dict
 
 from pydantic import BaseModel, Field
 
-from agents.general_agent.common import ClaudeAgentConfig
+from agents.general_agent.common import ClaudeAgentConfig, Implementation_format
 from agents.general_agent.evaluator import GeneralEvaluator
-from agents.general_agent.utils import convert_function_tool_to_custom_tool, format_loaded_skills
+from agents.general_agent.loc_code_prompt import (
+    CODE_EXECUTOR_SYSTEM,
+    CODE_EXECUTOR_USER,
+)
+from agents.general_agent.utils import (
+    convert_function_tool_to_custom_tool,
+    format_loaded_skills,
+)
 from loongflow.agentsdk.logger import get_logger
 from loongflow.agentsdk.message import Message, ContentElement, Role, MimeType
 from loongflow.agentsdk.tools import FunctionTool
-from loongflow.framework.claude_code import (
-    GENERAL_EXECUTOR_SYSTEM,
-    GENERAL_EXECUTOR_USER,
-)
 from loongflow.framework.pes.context import Context, Workspace
 from loongflow.framework.pes.register import Worker
 from loongflow.framework.claude_code.claude_code_agent import ClaudeCodeAgent
@@ -121,7 +124,8 @@ def _create_evaluation_tool(
         random_str = uuid.uuid4().hex[:3]
         evaluation_file_path = f"{candidate_dir}/evaluation_{random_str}.json"
 
-        actual_solution = _extract_implementation_section(full_solution)
+        actual_solution_dict = _extract_json(solution_file_path)
+        actual_solution = json.dumps(actual_solution_dict, indent=2, ensure_ascii=False)
         actual_solution_file_path = f"{candidate_dir}/actual_solution_{random_str}.md"
         with open(actual_solution_file_path, "w", encoding="utf-8") as f:
             f.write(actual_solution)
@@ -177,6 +181,57 @@ def _create_evaluation_tool(
     )
 
 
+def _extract_json(plan_path: str) -> Dict[str, Any]:
+    """
+    Extract JSON data from the Details section of best_plan.md file.
+
+    Args:
+        plan_path: Path to the best_plan.md file
+
+    Returns:
+        Dictionary containing the extracted JSON data, or empty dict if not found
+    """
+    try:
+        with open(plan_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Search for JSON code block in the Details section
+        # Pattern: ```json ... { ... } ... ```
+        # Use greedy matching to capture nested JSON objects correctly
+        json_pattern = r"```json\s*(\{.*\})\s*```"
+        match = re.search(json_pattern, content, re.DOTALL)
+
+        if match:
+            json_str = match.group(1)
+            try:
+                # Pre-process invalid escape sequences in JSON
+                # JSON only supports: \", \\, \/, \b, \f, \n, \r, \t, \uXXXX
+                # Other escapes like \. \* \+ (common in regex) are invalid
+
+                # Step 1: Handle \u that is NOT followed by exactly 4 hex digits
+                # e.g., \user, \update -> should be \\user, \\update
+                json_str = re.sub(r"\\u(?![0-9a-fA-F]{4})", r"\\\\u", json_str)
+
+                # Step 2: Handle other invalid single-char escapes
+                # Replace backslash followed by any char not in valid escape set
+                json_str = re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", json_str)
+
+                # Parse the JSON data
+                json_data = json.loads(json_str)
+                logger.debug(f"Successfully extracted JSON data from {plan_path}")
+                return json_data
+            except json.JSONDecodeError as e:
+                logger.warning(f"Failed to parse JSON from {plan_path}: {e}")
+                return {}
+        else:
+            logger.debug(f"No JSON code block found in {plan_path}")
+            return {}
+
+    except Exception as e:
+        logger.warning(f"Error reading plan file {plan_path}: {e}")
+        return {}
+
+
 @dataclass
 class ExecutionContext:
     """Holds previous candidate and stage1 plan information."""
@@ -186,6 +241,7 @@ class ExecutionContext:
     parent_solution: str
     stage1_plan: str
     stage1_plan_file_path: str
+    stage1_plan_dict: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -320,9 +376,7 @@ class GeneralExecuteAgent(Worker):
         for round_idx in range(self.config.max_rounds):
             # Optimized logging: only log every 10 rounds or first few
             if round_idx % 10 == 0 or round_idx < 5:
-                logger.info(
-                    f"[{context.trace_id}] Executor: Round {round_idx} started"
-                )
+                logger.info(f"[{context.trace_id}] Executor: Round {round_idx} started")
             else:
                 logger.debug(
                     f"[{context.trace_id}] Executor: Round {round_idx} processing"
@@ -442,9 +496,11 @@ class GeneralExecuteAgent(Worker):
                 llm_out_dict = json.loads(llm_str)
             except json.JSONDecodeError:
                 logger.error(
-                    f"[{context.trace_id}] Executor: Failed to parse LLM output JSON"
+                    f"[{context.trace_id}] Executor: Failed to parse LLM output JSON, {llm_str}"
                 )
-                logger.debug(f"[{context.trace_id}] Executor: Raw LLM output: {llm_str[:500]}")
+                logger.debug(
+                    f"[{context.trace_id}] Executor: Raw LLM output: {llm_str[:500]}"
+                )
             final_results["idx"] = idx
             final_results["total_completion_tokens"] += llm_out_dict.get(
                 "total_completion_tokens", 0
@@ -499,7 +555,9 @@ class GeneralExecuteAgent(Worker):
         )
         custom_tools = {"evaluate_candidate": evaluation_tool_config}
 
-        logger.debug(f"[{context.trace_id}] Executor: Created evaluation tool for candidate {round_idx}_{candidate_idx}")
+        logger.debug(
+            f"[{context.trace_id}] Executor: Created evaluation tool for candidate {round_idx}_{candidate_idx}"
+        )
 
         agent = ClaudeCodeAgent(
             model=self.config.llm_config.model,
@@ -508,7 +566,7 @@ class GeneralExecuteAgent(Worker):
             work_dir=work_dir,
             tool_list=self.config.build_in_tools,
             custom_tools=custom_tools,
-            system_prompt=self.config.system_prompt or GENERAL_EXECUTOR_SYSTEM,
+            system_prompt=CODE_EXECUTOR_SYSTEM,
             permission_mode=self.config.permission_mode or "acceptEdits",
             setting_sources=["project"],
             max_turns=self.config.max_turns,
@@ -528,15 +586,16 @@ class GeneralExecuteAgent(Worker):
         # Format loaded skills information for prompt
         loaded_skills_info = format_loaded_skills(self.config.skills, work_dir)
 
-        user_prompt = GENERAL_EXECUTOR_USER.format(
+        user_prompt = CODE_EXECUTOR_USER.format(
             task_info=context.task,
-            improvement_plan=parent_ctx.stage1_plan,
+            improvement_plan=json.dumps(parent_ctx.stage1_plan_dict, indent=2),
             parent_score=parent_ctx.parent_core,
             parent_solution=parent_ctx.parent_solution,
             previous_attempts=previous_attempts,
             solution_path=candidate_solution_path_for_claude,
             workspace=work_dir,
             loaded_skills=loaded_skills_info,
+            implementation_format=Implementation_format,
         )
 
         if previous_attempts:
@@ -739,6 +798,12 @@ class GeneralExecuteAgent(Worker):
         if plan_path:
             with open(plan_path, "r", encoding="utf-8") as f:
                 stage1_plan = f.read()
+
+        # Extract JSON data from best_plan.md if it exists
+        stage1_plan_dict = {}
+        if plan_path and os.path.exists(plan_path):
+            stage1_plan_dict = _extract_json(plan_path)
+
         with open(parent_info_path, "r", encoding="utf-8") as f:
             parent_data = json.load(f)
 
@@ -748,4 +813,5 @@ class GeneralExecuteAgent(Worker):
             parent_solution=json.dumps(parent_data),
             stage1_plan=stage1_plan,
             stage1_plan_file_path=plan_path,
+            stage1_plan_dict=stage1_plan_dict,
         )
