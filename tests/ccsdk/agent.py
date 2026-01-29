@@ -7,7 +7,6 @@ async def main():
     async for message in query(
         prompt="请你利用skill-creator帮我生成一个关于如何使用LoongFlow框架搭建专家Agent的Skill。",
         options=ClaudeAgentOptions(
-            cwd="/Users/daixunan/baidu/agent/LoongFlow/tests/ccsdk",
             setting_sources=["project"],
             allowed_tools=["Skill"],  # Tools Claude can use
             permission_mode="acceptEdits",  # Auto-approve file edits
