@@ -7,9 +7,13 @@ General Evolve Agent Runner - Refactored to use BasePESRunner.
 import argparse
 from typing import Any, Dict, List, Tuple, Type
 
+from agents.general_agent.evaluator import GeneralEvaluator
+from agents.general_agent.executor import GeneralExecuteAgent
 from agents.general_agent.planner import GeneralPlanAgent
+from agents.general_agent.summary import GeneralSummaryAgent
 from loongflow.framework.pes import Worker
 from loongflow.framework.pes.base_runner import BasePESRunner
+from loongflow.framework.pes.context import EvolveChainConfig
 
 
 class GeneralPESAgent(BasePESRunner):
@@ -42,7 +46,12 @@ class GeneralPESAgent(BasePESRunner):
     ]:
         """Register General agent workers."""
         planners = [("general_planner", GeneralPlanAgent)]
-        return planners, None, None
+        executors = [("general_executor", GeneralExecuteAgent)]
+        summarizers = [("general_summarizer", GeneralSummaryAgent)]
+        return planners, executors, summarizers
+
+    def _create_evaluator(self, config: EvolveChainConfig):
+        return GeneralEvaluator(config.evolve.evaluator)
 
 
 if __name__ == "__main__":

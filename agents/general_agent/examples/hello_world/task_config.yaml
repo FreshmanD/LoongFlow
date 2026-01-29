@@ -4,13 +4,7 @@ workspace_path: "./output-hello-world"
 # Global LLM configuration(optional)
 # If evaluator or other components do not have their own llm_config, this configuration will be used
 llm_config:
-#  url: Default to None, and LiteLLM will load the url from env
-#  api_key: Default to None, and LiteLLM will load the api_key from env
-  model: "deepseek-v3"
-  claude_agent_options:
-    permission_mode: "prompt"
-    max_turns: 10
-    max_thinking_tokens: 1000
+  model: "deepseek-v3.2"
 
 # ------------------------------------------------------------------------------
 # Define the configuration for all available components
@@ -20,21 +14,34 @@ llm_config:
 planners:
   general_planner:
     # Planner's specific configuration, such as prompt templates, used LLM, etc.
-    react_max_steps: 10
+    # system_prompt: xxx
+    # build_in_tools: ["Skill", "Read", "Write", "Bash"]
+    # skills: ["skill-creator"]
+    permission_mode: "acceptEdits"
+    max_turns: 10
+    # max_thinking_tokens: 1000
 
 # All available Executor configuration
 executors:
-  evolve_executor_fuse:
-    # ExecutorFuse's specific configuration
-    max_rounds: 3
-    react_max_steps: 15
-    score_threshold: 0.95
+  general_executor:
+    # system_prompt: xxx
+    # build_in_tools: ["Skill", "Read", "Write", "Bash"]
+    # skills: ["skill-creator"]
+    max_rounds: 1
+    permission_mode: "acceptEdits"
+    max_turns: 20
+    # max_thinking_tokens: 1000
 
 # All available Summarizer configuration
 summarizers:
-  evolve_summary:
+  general_summarizer:
     # Summarizer's specific configuration
-    react_max_steps: 6
+    # system_prompt: xxx
+    # build_in_tools: ["Skill", "Read", "Write", "Bash"]
+    # skills: ["skill-creator"]
+    permission_mode: "acceptEdits"
+    max_turns: 10
+    # max_thinking_tokens: 1000
 
 # ------------------------------------------------------------------------------
 # Define the main evolution process configuration
@@ -42,22 +49,28 @@ summarizers:
 evolve:
   # Task description, is the core objective of the entire evolution process
   task: |
-    Test
-
+    Help me write a documentation for the LoongFlow project.
+           
   # Name of the component selected for current run
   planner_name: "general_planner"
-  executor_name: "evolve_executor_fuse"
-  summary_name: "evolve_summary"
+  executor_name: "general_executor"
+  summary_name: "general_summarizer"
 
   # Core parameters for the evolution process
   max_iterations: 200
-  target_score: 1.0
+  target_score: 0.5
   concurrency: 1
 
   # Evaluator configuration
   evaluator:
     timeout: 1200
-
+    agent:
+      # system_prompt: xxx
+      # build_in_tools: ["Skill", "Read", "Write", "Bash"]
+      # skills: ["skill-creator"]
+      permission_mode: "acceptEdits"
+      max_turns: 20
+      # max_thinking_tokens: 1000
 
   # Database configuration
   database:

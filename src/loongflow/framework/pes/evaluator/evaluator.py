@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from loongflow.agentsdk.logger.logger import get_logger
 from loongflow.agentsdk.message.elements import ContentElement
 from loongflow.agentsdk.message.message import Message
-from loongflow.framework.pes.context import EvaluatorConfig
+from loongflow.framework.pes.context import EvaluatorConfig, Context
 
 
 class EvaluationStatus(str, Enum):
@@ -111,7 +111,9 @@ class EvaluationResult:
 
 class Evaluator(ABC):
     @abstractmethod
-    async def evaluate(self, message: Message) -> "EvaluationResult":
+    async def evaluate(
+        self, message: Message, context: Optional[Context] = None
+    ) -> "EvaluationResult":
         """Run evaluation"""
         pass
 
@@ -323,7 +325,9 @@ class LoongFlowEvaluator(Evaluator):
                     f"[Parent] Process (pid: {process.pid}) cleanup complete."
                 )
 
-    async def evaluate(self, message: Message) -> EvaluationResult:
+    async def evaluate(
+        self, message: Message, context: Optional[Context] = None
+    ) -> EvaluationResult:
         try:
             code_to_evaluate = self._extract_evolution_context(message)
         except ValueError as e:
