@@ -22,7 +22,7 @@ from claude_agent_sdk import (
 logger = get_logger(__name__)
 
 
-def apply_llm_config(api_key: Optional[str], url: Optional[str]) -> None:
+def apply_llm_config(api_key: Optional[str], url: Optional[str], max_output_tokens: Optional[int]) -> None:
     """
     Apply LLMConfig to environment variables for claude_agent_sdk.
 
@@ -52,6 +52,9 @@ def apply_llm_config(api_key: Optional[str], url: Optional[str]) -> None:
         )
 
     os.environ["ANTHROPIC_BASE_URL"] = final_url
+
+    if max_output_tokens is not None:
+        os.environ["CLAUDE_CODE_MAX_OUTPUT_TOKENS"] = str(max_output_tokens)
 
 
 class ClaudeCodeAgent(AgentBase):
@@ -111,6 +114,7 @@ class ClaudeCodeAgent(AgentBase):
         setting_sources: Optional[List[str]] = None,
         max_turns: Optional[int] = None,
         max_thinking_tokens: Optional[int] = None,
+        max_output_tokens: Optional[int] = None,
     ):
         """
         Initialize ClaudeCodeAgent.
@@ -179,7 +183,7 @@ class ClaudeCodeAgent(AgentBase):
         self.permission_mode = permission_mode or "acceptEdits"
         self.setting_sources = setting_sources or ["project"]
 
-        apply_llm_config(api_key, url)
+        apply_llm_config(api_key, url, max_output_tokens)
 
         # Build allowed tools list
         allowed_tools = self.tool_list.copy()
@@ -384,6 +388,8 @@ class ClaudeCodeAgent(AgentBase):
         input_tokens = 0
         output_tokens = 0
         duration_ms = None
+        result_text = None
+        structured_output = None
 
         # Consolidated initialization log with structured data
         self.logger.info(
@@ -394,6 +400,8 @@ class ClaudeCodeAgent(AgentBase):
             f"query_preview: {input_query[:100] + '...' if len(input_query) > 100 else input_query}, "
             f"tool_count: {len(self.tool_list) + len(self.custom_tools)}"
         )
+
+        self.logger.debug(f"[Claude Agent] Options: {self.options}")
 
         try:
             # Use ClaudeSDKClient for better connection management
@@ -430,6 +438,15 @@ class ClaudeCodeAgent(AgentBase):
                     elif isinstance(message, ResultMessage):
                         final_status = message.subtype
                         self.logger.info(f"[Claude Done]: {message.subtype}")
+
+                        if hasattr(message, "result") and message.result:
+                            result_text = str(message.result).strip()
+                            if result_text and result_text != "(no content)":
+                                if result_text not in full_response:
+                                    full_response.append(result_text)
+
+                        if hasattr(message, "structured_output"):
+                            structured_output = message.structured_output
 
                         # Extract token usage from ResultMessage
                         if hasattr(message, "usage") and message.usage:
@@ -482,6 +499,10 @@ class ClaudeCodeAgent(AgentBase):
         # Add optional fields if available
         if duration_ms is not None:
             metadata["duration_ms"] = duration_ms
+        if result_text is not None:
+            metadata["result_text"] = result_text
+        if structured_output is not None:
+            metadata["structured_output"] = structured_output
 
         # Return as LoongFlow Message
         return Message.from_text(

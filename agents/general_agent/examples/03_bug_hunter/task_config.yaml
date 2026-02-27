@@ -9,7 +9,7 @@ workspace_path: "./output-bug-hunter"
 
 # LLM Configuration
 llm_config:
-  model: "anthropic/deepseek-v3.2"
+  model: "anthropic/deepseek-v3"
 
 # ------------------------------------------------------------------------------
 # Component Configuration with Code Analysis Skill
@@ -21,6 +21,7 @@ planners:
     skills: ["code-analysis"]  # 🎯 Load bug hunting skill
     permission_mode: "acceptEdits"
     max_turns: 50
+    max_output_tokens: 10000
 
 # Executor: Implements bug fixes after user approval
 executors:
@@ -28,6 +29,7 @@ executors:
     skills: ["code-analysis"]
     permission_mode: "acceptEdits"
     max_turns: 50
+    max_output_tokens: 10000
 
 # Summarizer: Reflects on fixes and extracts lessons
 summarizers:
@@ -35,6 +37,7 @@ summarizers:
     skills: []
     permission_mode: "acceptEdits"
     max_turns: 30
+    max_output_tokens: 10000
 
 # ------------------------------------------------------------------------------
 # Evolution Process Configuration
@@ -222,6 +225,7 @@ evolve:
       skills: ["code-analysis"]
       permission_mode: "acceptEdits"
       max_turns: 40
+      max_output_tokens: 10000
 
   # Database configuration
   database:

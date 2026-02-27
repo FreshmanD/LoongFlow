@@ -376,6 +376,7 @@ class GeneralEvaluator(Evaluator):
             setting_sources=["project"],
             max_turns=self.config.agent.get("max_turns"),
             max_thinking_tokens=self.config.agent.get("max_thinking_tokens"),
+            max_output_tokens=self.config.agent.get("max_output_tokens")
         )
         self._current_agent = agent
 

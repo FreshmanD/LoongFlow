@@ -294,6 +294,7 @@ class GeneralSummaryAgent(Worker):
             setting_sources=["project"],
             max_turns=self.config.max_turns,
             max_thinking_tokens=self.config.max_thinking_tokens,
+            max_output_tokens=self.config.max_output_tokens
         )
 
         # Get the expected summary path

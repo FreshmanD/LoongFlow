@@ -186,12 +186,12 @@ def _boltzmann_selection_with_weights(
         return np.random.choice(solutions)
 
     # Split into elite and non-elite groups
-    non_elites = []
+    non_elites: list[Solution] = []
     for solution in solutions:
-        if solution.solution_id not in elites:
+        if solution not in elites:
             non_elites.append(solution)
 
-    candidates = []
+    candidates: list[Solution] = []
 
     # Sample candidates from both groups with 60% elite and 40% non-elite proportion
     # Total candidates: 5 total (3 from elites, 2 from non-elites)
