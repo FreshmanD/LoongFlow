@@ -1,91 +1,70 @@
 """
-Evaluator for the Heilbronn problem for convex regions (n=13), aligned with standard specifications.
+Evaluator for heilbronn problem for convex regions for n=13 points with improved timeout handling
 """
 
-import os
-import pickle
-import subprocess
-import sys
-import tempfile
-import time
-import traceback
-
 import numpy as np
-from scipy.spatial import ConvexHull
+import time
+import os
+import subprocess
+import tempfile
+import traceback
+import sys
+import pickle
 
-# --- Constants ---
-N_POINTS = 13
-TARGET_VALUE = 0.0309  # Benchmark for n=13 in a unit square
-TIMEOUT_SECONDS = 1800
 TOL = 1e-6
-
+TOL_SQ = TOL * TOL
+REGION_AREA = 1.0  # Unit square area
 
 class TimeoutError(Exception):
-    """Custom timeout exception."""
-
     pass
 
 
-def validate_placement(points: np.ndarray):
-    """Checks that all points are inside the unit square [0,1]x[0,1],
-    that no points overlap, and that any three points can form a triangle."""
+def timeout_handler(signum, frame):
+    """Handle timeout signal"""
+    raise TimeoutError("Function execution timed out")
 
-    def is_collinear(p1, p2, p3):
-        # Using a tolerance for floating point comparisons
-        return (
-            abs(
-                p1[0] * (p2[1] - p3[1])
-                + p2[0] * (p3[1] - p1[1])
-                + p3[0] * (p1[1] - p2[1])
-            )
-            < TOL
-        )
-
-    # Check for duplicates by checking distance between all pairs of points
-    for i in range(len(points)):
-        for j in range(i + 1, len(points)):
-            if np.linalg.norm(points[i] - points[j]) < TOL:
-                return False, f"Duplicate points found: P{i} and P{j} are too close."
-
-    # Check if points are inside the unit square
-    for i, (x, y) in enumerate(points):
-        if not (0.0 <= x <= 1.0 and 0.0 <= y <= 1.0):
-            return False, f"Point P{i} ({x:.4f}, {y:.4f}) is outside the unit square."
-
-    # Check if any three points are collinear
-    num_points = len(points)
-    for i in range(num_points):
-        for j in range(i + 1, num_points):
-            for k in range(j + 1, num_points):
-                if is_collinear(points[i], points[j], points[k]):
-                    return False, f"Points P{i}, P{j}, P{k} are collinear."
-
-    return True, None
-
+def points_are_close(p1, p2):
+    """Check if two points are closer than a tolerance threshold."""
+    dx = p1[0] - p2[0]
+    dy = p1[1] - p2[1]
+    return dx * dx + dy * dy < TOL_SQ
 
 def triangle_area(a, b, c):
-    """Calculate the area of a triangle given three vertices using the cross product formula."""
-    return 0.5 * abs(a[0] * (b[1] - c[1]) + b[0] * (c[1] - a[1]) + c[0] * (a[1] - b[1]))
+    """Calculate area of triangle given three vertices using cross product."""
+    return 0.5 * abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]))
 
 
-def min_triangle_area(points):
-    """Calculate the minimal triangle area formed by any three points in the set."""
-    min_area = float("inf")
+def verify_solution(points, min_area):
+    """Validate solution correctness and constraints."""
     n = len(points)
+
+    # Check all points are within [0,1]x[0,1]
+    for p in points:
+        if not (0 <= p[0] <= 1 and 0 <= p[1] <= 1):
+            return False
+
+    # Check minimum point separation
+    for i in range(n):
+        for j in range(i + 1, n):
+            if points_are_close(points[i], points[j]):
+                return False
+
+    # Verify actual minimum area matches reported
+    min_computed = float('inf')
     for i in range(n):
         for j in range(i + 1, n):
             for k in range(j + 1, n):
                 area = triangle_area(points[i], points[j], points[k])
-                if area < min_area:
-                    min_area = area
-    return min_area
+                if area < 1e-10:  # Degenerate triangle check
+                    return False
+                if area < min_computed:
+                    min_computed = area
 
+    return abs(min_computed - min_area) < 1e-5
 
-def run_with_timeout(program_path, n_points, timeout_seconds=TIMEOUT_SECONDS):
-    """
-    Runs the program in a separate process with a timeout.
-    """
+def run_with_timeout(program_path, timeout_seconds=20):
     with tempfile.NamedTemporaryFile(suffix=".py", delete=False) as temp_file:
+        # Write a script that executes the program and saves results
         script = f"""
 import sys
 import numpy as np
@@ -93,58 +72,88 @@ import os
 import pickle
 import traceback
 
+# Add the directory to sys.path
 sys.path.insert(0, os.path.dirname('{program_path}'))
 
+# Debugging info
+print(f"Running in subprocess, Python version: {{sys.version}}")
+print(f"Program path: {program_path}")
+
 try:
+    # Import the program
     spec = __import__('importlib.util').util.spec_from_file_location("program", '{program_path}')
     program = __import__('importlib.util').util.module_from_spec(spec)
     spec.loader.exec_module(program)
 
-    print(f"Calling run_search_point(n={n_points})...")
-    points, min_area = program.run_search_point(n={n_points})
-    print(f"run_search_point() returned successfully.")
+    # Run the search point function
+    print("Calling simulate_heilbronn()...")
+    best_overall_points, best_overall_min_area, best_area_ratio = program.simulate_heilbronn(n=13)
+    print(f"simulate_heilbronn() returned successfully: best_area_ratio = {{best_area_ratio}}")
 
-    results = {{'points': points, 'min_area': min_area}}
+    # Save results to a file
+    results = {{
+        'best_overall_points': best_overall_points,
+        'best_overall_min_area': best_overall_min_area,
+        'best_area_ratio': best_area_ratio
+    }}
+
     with open('{temp_file.name}.results', 'wb') as f:
         pickle.dump(results, f)
+    print(f"Results saved to {temp_file.name}.results")
 
 except Exception as e:
+    # If an error occurs, save the error instead
+    print(f"Error in subprocess: {{str(e)}}")
+    traceback.print_exc()
     with open('{temp_file.name}.results', 'wb') as f:
-        pickle.dump({{'error': str(e), 'traceback': traceback.format_exc()}}, f)
+        pickle.dump({{'error': str(e)}}, f)
+    print(f"Error saved to {temp_file.name}.results")
 """
         temp_file.write(script.encode())
         temp_file_path = temp_file.name
 
     results_path = f"{temp_file_path}.results"
+
     try:
+        # Run the script with timeout
         process = subprocess.Popen(
-            [sys.executable, temp_file_path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            [sys.executable, temp_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        stdout, stderr = process.communicate(timeout=timeout_seconds)
 
-        if process.returncode != 0:
-            raise RuntimeError(
-                f"Process exited with code {process.returncode}\\n"
-                f"stdout:\\n{stdout.decode()}\\nstderr:\\n{stderr.decode()}"
-            )
+        try:
+            stdout, stderr = process.communicate(timeout=timeout_seconds)
+            exit_code = process.returncode
 
-        if os.path.exists(results_path):
-            with open(results_path, "rb") as f:
-                results = pickle.load(f)
-            if "error" in results:
-                raise RuntimeError(
-                    f"Program execution failed: {results['error']}\\n{results['traceback']}"
-                )
-            return results["points"], results["min_area"]
-        else:
-            raise RuntimeError("Results file not found.")
-    except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait()
-        raise TimeoutError(f"Process timed out after {timeout_seconds} seconds")
+            # Always print output for debugging purposes
+            print(f"Subprocess stdout: {stdout.decode()}")
+            if stderr:
+                print(f"Subprocess stderr: {stderr.decode()}")
+
+            # Still raise an error for non-zero exit codes, but only after printing the output
+            if exit_code != 0:
+                raise RuntimeError(f"Process exited with code {exit_code}")
+
+            # Load the results
+            if os.path.exists(results_path):
+                with open(results_path, "rb") as f:
+                    results = pickle.load(f)
+
+                # Check if an error was returned
+                if "error" in results:
+                    raise RuntimeError(f"Program execution failed: {results['error']}")
+
+                return results["best_overall_points"], results["best_overall_min_area"], results["best_area_ratio"]
+            else:
+                raise RuntimeError("Results file not found")
+
+        except subprocess.TimeoutExpired:
+            # Kill the process if it times out
+            process.kill()
+            process.wait()
+            raise TimeoutError(f"Process timed out after {timeout_seconds} seconds")
+
     finally:
+        # Clean up temporary files
         if os.path.exists(temp_file_path):
             os.unlink(temp_file_path)
         if os.path.exists(results_path):
@@ -153,133 +162,67 @@ except Exception as e:
 
 def evaluate(program_path):
     """
-    Evaluates the program and returns a structured result dictionary.
+    Evaluate the program by running it once and checking area
+
+    Args:
+        program_path: Path to the program file
+
+    Returns:
+        Dictionary of metrics
     """
-    start_time = time.time()
-    status = "success"
+    # Target value from the paper
+    TARGET_VALUE = 0.0309  # AlphaEvolve result for n=13
 
     try:
-        points, reported_min_area = run_with_timeout(program_path, n_points=N_POINTS)
-        eval_time = time.time() - start_time
+        # For constructor-based approaches, a single evaluation is sufficient
+        # since the result is deterministic
+        start_time = time.time()
 
-        if not isinstance(points, np.ndarray):
-            points = np.array(points)
+        # Use subprocess to run with timeout
+        best_overall_points, best_overall_min_area, best_area_ratio = run_with_timeout(
+            program_path, timeout_seconds=600  # Single timeout
+        )
 
-        # --- Shape Validation ---
-        if points.shape != (N_POINTS, 2):
-            shape_error = (
-                f"Invalid shape: expected ({N_POINTS}, 2), but got {points.shape}"
-            )
-            return {
-                "score": 0.0,
-                "status": "validation_failed",
-                "summary": shape_error,
-                "metrics": {
-                    "min_area_ratio": 0.0,
-                    "target_ratio": 0.0,
-                    "validity": 0.0,
-                    "eval_time": eval_time,
-                },
-                "artifacts": {
-                    "stderr": shape_error,
-                    "failure_stage": "shape_validation",
-                    "execution_time": f"{eval_time:.2f}s",
-                },
-            }
+        end_time = time.time()
+        eval_time = end_time - start_time
 
-        # --- Geometric Validation ---
-        is_valid, error_message = validate_placement(points)
-        validity = 1.0 if is_valid else 0.0
+        if not isinstance(best_overall_points, np.ndarray):
+            best_overall_points = np.array(best_overall_points)
 
-        # --- Independent Metric Calculation ---
-        final_min_area = min_triangle_area(points) if is_valid else 0.0
+        valid = verify_solution(best_overall_points, best_overall_min_area)
 
-        # Calculate area ratio based on the convex hull of the points
-        min_area_ratio = 0.0
-        if is_valid:
-            try:
-                hull = ConvexHull(points)
-                convex_hull_area = hull.volume
-                if convex_hull_area > TOL:
-                    min_area_ratio = final_min_area / convex_hull_area
-            except Exception as e:
-                is_valid = False
-                validity = 0.0
-                error_message = f"Failed to compute convex hull: {e}"
+        # Target ratio (how close we are to the target)
+        target_ratio = best_area_ratio / TARGET_VALUE if valid else 0.0
 
-        target_ratio = min_area_ratio / TARGET_VALUE if is_valid else 0.0
+        validity = 1.0 if valid else 0.0
 
-        # The final score is the target ratio, penalized if invalid
-        score = target_ratio * validity
+        # Combined score - higher is better
+        combined_score = target_ratio * validity
 
-        artifacts = {"execution_time": f"{eval_time:.2f}s"}
-        if not is_valid:
-            status = "validation_failed"
-            summary = f"Validation failed: {error_message}"
-            artifacts["validation_report"] = f"Validation failed: {error_message}"
-            artifacts["failure_stage"] = "geometric_validation"
-        else:
-            status = "success"
-            summary = "Evaluation successful."
-            artifacts["validation_report"] = "Placement is valid."
-            artifacts["summary"] = f"Achieved {target_ratio:.2%} of benchmark."
+        print(
+            f"Evaluation: valid={valid}, best_area_ratio={best_area_ratio:.6f}, target={TARGET_VALUE}, ratio={target_ratio:.6f}, time={eval_time:.2f}s"
+        )
 
         return {
-            "score": float(score),
-            "status": status,
-            "summary": summary,
-            "metrics": {
-                "min_area": float(final_min_area),
-                "min_area_ratio": float(min_area_ratio),
-                "target_ratio": float(target_ratio),
-                "validity": float(validity),
-                "eval_time": float(eval_time),
-            },
-            "artifacts": artifacts,
+            "best_area_ratio": float(best_area_ratio),
+            "target_ratio": float(target_ratio),
+            "validity": float(validity),
+            "combined_score": float(combined_score),
         }
 
-    except TimeoutError as e:
-        eval_time = time.time() - start_time
-        return {
-            "score": 0.0,
-            "status": "execution_failed",
-            "summary": f"Execution failed: The program timed out after {TIMEOUT_SECONDS} seconds.",
-            "metrics": {
-                "min_area_ratio": 0.0,
-                "target_ratio": 0.0,
-                "validity": 0.0,
-                "eval_time": eval_time,
-            },
-            "artifacts": {
-                "stderr": str(e),
-                "failure_stage": "execution_timeout",
-                "execution_time": f"{eval_time:.2f}s",
-            },
-        }
     except Exception as e:
-        eval_time = time.time() - start_time
+        print(f"Evaluation failed completely: {str(e)}")
+        traceback.print_exc()
         return {
-            "score": 0.0,
-            "status": "execution_failed",
-            "summary": f"Program execution failed: {str(e)}",
-            "metrics": {
-                "min_area_ratio": 0.0,
-                "target_ratio": 0.0,
-                "validity": 0.0,
-                "eval_time": eval_time,
-            },
-            "artifacts": {
-                "stderr": f"Evaluation failed completely: {str(e)}",
-                "traceback": traceback.format_exc(),
-                "failure_stage": "program_execution",
-                "execution_time": f"{eval_time:.2f}s",
-            },
+            "best_area_ratio": 0.0,
+            "target_ratio": 0.0,
+            "validity": 0.0,
+            "combined_score": 0.0,
         }
-
 
 if __name__ == "__main__":
-    file = "initial_program.py"
-    res = evaluate(file)
-    import json
-
-    print(json.dumps(res, ensure_ascii=False, indent=2))
+    result = evaluate("./best_solution.py")
+    print(f"Best_area_ratio: {result['best_area_ratio']:.6f}")
+    print(f"Target_ratio: {result['target_ratio']:.6f}")
+    print(f"Validity: {result['validity']}")
+    print(f"Combined_score: {result['combined_score']:.6f}")

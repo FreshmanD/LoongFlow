@@ -67,6 +67,7 @@ def validate_packing(circles: np.ndarray):
         "max_radius": float(np.max(circles[:, 2])),
         "avg_radius": float(np.mean(circles[:, 2])),
         "perimeter": 0.0,
+        "error_message": "",
     }
 
     # Checks that circles are disjoint
@@ -78,6 +79,7 @@ def validate_packing(circles: np.ndarray):
         if center_distance < radii_sum:
             violation = f"Circles are NOT disjoint: {circle1} and {circle2}."
             validation_details["overlaps_check"].append(violation)
+            validation_details["error_message"] += violation + "\n"
             print(violation)
 
     # Checks rectangle of perimeter 4
@@ -87,6 +89,7 @@ def validate_packing(circles: np.ndarray):
     if (width + height) > 2:
         violation = f"Perimeter of minimum circumscribing rectangle: {perimeter:.6f}, not equal to 4"
         validation_details["perimeter_check"].append(violation)
+        validation_details["error_message"] += violation + "\n"
         print(violation)
 
     is_valid = (
@@ -97,169 +100,6 @@ def validate_packing(circles: np.ndarray):
     validation_details["is_valid"] = is_valid
 
     return is_valid, validation_details
-
-
-def _circles_overlap(centers, radii):
-    """Protected function to compute max radii."""
-    n = centers.shape[0]
-
-    for i in range(n):
-        for j in range(i + 1, n):
-            dist = np.sqrt(np.sum((centers[i] - centers[j]) ** 2))
-            if radii[i] + radii[j] > dist:
-                return True
-
-    return False
-
-
-def check_construction_rectangle(
-    centers: np.ndarray, radii: np.ndarray, n: int, width: float, height: float
-) -> dict:
-    """
-    Evaluates a circle packing in a rectangle.
-
-    Checks if all circles are contained within the rectangle and do not overlap.
-    Provides detailed diagnostics for any violations, distinguishing between
-    genuine errors and potential floating-point precision issues.
-
-    Args:
-      centers: A numpy array of shape (n, 2) with the (x, y) coordinates of the circle centers.
-      radii: A numpy array of shape (n,) with the radii of the circles.
-      n: The number of circles.
-      width: The width of the rectangle.
-      height: The height of the rectangle.
-
-    Returns:
-      A dictionary containing the sum of radii if the packing is valid.
-      If invalid, it returns a dictionary with -np.inf as the sum of radii
-      and a corresponding error_message.
-    """
-
-    TOLERANCE = 1e-9  # Tolerance for floating-point comparisons
-
-    # --- Start of checks for rectangle geometry ---
-    # 1. Check if width and height are finite, real numbers.
-    if not np.all(np.isfinite([width, height])) or not np.isrealobj(
-        np.array([width, height])
-    ):
-        error_message = "Invalid width or height. Must be finite real numbers."
-        print(f"Error: {error_message}")
-        return {"sum_of_radii": -np.inf, "error_message": error_message}
-
-    # 2. Check if the rectangle's perimeter is 4.
-    if not np.isclose(2 * (width + height), 4.0):
-        error_message = f"Perimeter is not 4. Got {2 * (width + height)}"
-        print(f"Error: {error_message}")
-        return {"sum_of_radii": -np.inf, "error_message": error_message}
-
-    # 3. Check for valid, non-degenerate rectangle dimensions.
-    if width <= 0 or height <= 0:
-        error_message = f"Invalid rectangle dimensions. width={width}, height={height}"
-        print(f"Error: {error_message}")
-        return {"sum_of_radii": -np.inf, "error_message": error_message}
-    # --- End of rectangle checks ---
-
-    # General checks for the input arrays
-    if (
-        centers.shape != (n, 2)
-        or not np.isfinite(centers).all()
-        or not np.isrealobj(centers)
-    ):
-        error_message = (
-            "The 'centers' array has an invalid shape, non-finite, or complex values."
-        )
-        print(f"Error: {error_message}")
-        return {"sum_of_radii": -np.inf, "error_message": error_message}
-
-    # --- Geometric check for circle containment ---
-    # 1. Check each circle individually to see if it's contained
-    is_contained = (
-        (radii[:, None] <= centers)
-        & (centers <= np.array([width, height]) - radii[:, None])
-    ).all(axis=1)
-
-    # 2. If not all of them are contained, print diagnostics
-    if not is_contained.all():
-        error_message = "Circles are not contained within the rectangle."
-        print(f"Error: {error_message}")
-        for i, contained in enumerate(is_contained):
-            if not contained:
-                print(f"-> Diagnostics for Circle {i}:")
-                c_i = centers[i]
-                r_i = radii[i]
-                # Check violation for each of the four boundaries
-                violations = {
-                    "left": r_i - c_i[0],
-                    "right": c_i[0] - (width - r_i),
-                    "bottom": r_i - c_i[1],
-                    "top": c_i[1] - (height - r_i),
-                }
-                for boundary, violation_amount in violations.items():
-                    if violation_amount > TOLERANCE:
-                        print(
-                            f"  - Genuinely violates {boundary} boundary by {violation_amount:.4g}"
-                        )
-                    elif violation_amount > 0:
-                        print(
-                            f"  - Potential precision error at {boundary} boundary. Violation: {violation_amount:.4g}"
-                        )
-
-        return {"sum_of_radii": -np.inf, "error_message": error_message}
-
-    # --- Geometric check for circle overlaps ---
-    if n > 1:
-        has_overlap = False
-        # Iterate over every unique pair of circles
-        for i, j in itertools.combinations(range(n), 2):
-            center_dist_sq = np.sum((centers[i] - centers[j]) ** 2)
-            radii_sum_sq = (radii[i] + radii[j]) ** 2
-
-            # Check if squared distance is less than squared sum of radii
-            if center_dist_sq < radii_sum_sq:
-                if not has_overlap:  # Print header only once
-                    print("Error: Circles are overlapping.")
-                    has_overlap = True
-
-                overlap_sq = radii_sum_sq - center_dist_sq
-                # Distinguish between genuine overlap and touching circles (precision issue)
-                if overlap_sq > TOLERANCE:
-                    print(
-                        f"  - Genuinely overlapping: Circles {i} and {j}. Squared overlap: {overlap_sq:.4g}"
-                    )
-                else:
-                    print(
-                        f"  - Potential precision error: Circles {i} and {j} are touching/minutely overlapping. \
-Squared overlap: {overlap_sq:.4g}"
-                    )
-
-        if has_overlap:
-            error_message = "Circles are overlapping."
-            return {"sum_of_radii": -np.inf, "error_message": error_message}
-
-    if (
-        radii.shape != (n,)
-        or not np.isfinite(radii).all()
-        or not (0 <= radii).all()
-        or not np.isrealobj(radii)  # Added check for real numbers
-    ):
-        error_message = "radii bad shape or contains non-real/non-finite values"
-        print(error_message)
-        return {"sum_of_radii": -np.inf, "error_message": error_message}
-
-    if _circles_overlap(centers, radii):
-        error_message = "circles overlap"
-        print(error_message)
-        # Note: The original return value here was `({'sum_of_radii': -np.inf}, {})`, which was a tuple.
-        # It has been corrected to a dictionary to be consistent with other failure cases.
-        return {"sum_of_radii": -np.inf, "error_message": error_message}
-
-    print(
-        f"Valid packing found with width={width}, height={height},"
-        f" sum_radii={np.sum(radii)}"
-    )
-
-    print("The circles are disjoint and lie inside the rectangle.")
-    return {"sum_of_radii": float(np.sum(radii))}
 
 
 def run_with_timeout(program_path, timeout_seconds=20):
@@ -298,16 +138,13 @@ try:
     spec.loader.exec_module(program)
     
     # Run the packing function
-    print("Calling run_packing(num_circles={num_circles})...")
-    centers, radii, width, height = program.run_packing(num_circles={num_circles})
-    print(f"run_packing() returned successfully: centers = {{centers}}")
+    print("Calling construct_packing()...")
+    circles = program.construct_packing()
+    print(f"construct_packing() returned successfully: circles = {{circles}}")
 
     # Save results to a file
     results = {{
-        'centers': centers,
-        'radii': radii,
-        'width': width,
-        'height': height,
+        'circles': circles,
     }}
 
     with open('{temp_file.name}.results', 'wb') as f:
@@ -330,9 +167,7 @@ except Exception as e:
     try:
         # Run the script with timeout
         process = subprocess.Popen(
-            [sys.executable, temp_file_path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            [sys.executable, temp_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
 
         try:
@@ -357,12 +192,7 @@ except Exception as e:
                 if "error" in results:
                     raise RuntimeError(f"Program execution failed: {results['error']}")
 
-                return (
-                    results["centers"],
-                    results["radii"],
-                    results["width"],
-                    results["height"],
-                )
+                return results["circles"]
             else:
                 raise RuntimeError("Results file not found")
 
@@ -378,7 +208,6 @@ except Exception as e:
             os.unlink(temp_file_path)
         if os.path.exists(results_path):
             os.unlink(results_path)
-
 
 def evaluate(program_path):
     """
@@ -400,7 +229,7 @@ def evaluate(program_path):
         start_time = time.time()
 
         # Use subprocess to run with timeout
-        centers, radii, width, height = run_with_timeout(
+        circles = run_with_timeout(
             program_path, timeout_seconds=timeout_duration
         )
 
@@ -408,14 +237,13 @@ def evaluate(program_path):
         eval_time = end_time - start_time
 
         # Ensure centers and radii are numpy arrays
-        if not isinstance(centers, np.ndarray):
-            centers = np.array(centers)
-        if not isinstance(radii, np.ndarray):
-            radii = np.array(radii)
+        if not isinstance(circles, np.ndarray):
+            circles = np.array(circles)
 
         # Check shape and size
-        if centers.shape != (21, 2):
-            shape_error = f"Invalid shapes: centers={centers.shape}, expected (21, 2)"
+        shape_valid = circles.shape == (21, 3)
+        if not shape_valid:
+            shape_error = f"Invalid shapes: circles={circles.shape}, expected (21, 3)"
             print(shape_error)
 
             return {
@@ -432,22 +260,24 @@ def evaluate(program_path):
                     "stderr": shape_error,
                     "failure_stage": "shape_validation",
                     "expected_shapes": "centers: (21, 2)",
-                    "actual_shapes": f"centers: {centers.shape}",
+                    "actual_shapes": f"centers: {circles.shape}",
                     "execution_time": f"{eval_time:.2f}s",
                 },
             }
 
-        # Validate solution using check_construction_rectangle
-        validation_result = check_construction_rectangle(
-            centers, radii, 21, width, height
-        )
+        # Validate solution
+        is_valid, validation_details = validate_packing(circles)
 
-        is_valid = validation_result.get("sum_of_radii", -np.inf) > -np.inf
-        sum_radii = validation_result["sum_of_radii"] if is_valid else 0.0
+        # Calculate sum
+        sum_radii = float(np.sum(circles[:, 2])) if is_valid else 0.0
 
-        # Metrics calculation
+        # Target ratio (how close we are to the target)
         target_ratio = sum_radii / TARGET_VALUE if is_valid else 0.0
+
+        # Validity score
         validity = 1.0 if is_valid else 0.0
+
+        # Combined score - higher is better
         combined_score = target_ratio * validity
 
         print(
@@ -455,34 +285,34 @@ def evaluate(program_path):
             f"target={TARGET_VALUE}, ratio={target_ratio:.6f}, time={eval_time:.2f}s"
         )
 
-        # Prepare artifacts, status, and summary based on validation result
-        artifacts = {"execution_time": f"{eval_time:.2f}s"}
+        # Prepare artifacts with packing details
+        artifacts = {
+            "execution_time": f"{eval_time:.2f}s",
+            "packing_summary": f"Sum of radii: {sum_radii:.6f}/{TARGET_VALUE} = {target_ratio:.4f}",
+            "validation_report": f"Valid: {is_valid}, Violations: {len(validation_details.get('overlaps_check', []))} overlaps, Perimeter of minimum circumscribing rectangle: {validation_details.get('perimeter'):.6f}",
+        }
+        summary = f"Evaluation successful. The packing is valid with a total radii sum of {sum_radii:.6f}."
+
+        # Add validation details if there are issues
         if not is_valid:
-            status = "validation_failed"
-            error_message = validation_result.get(
-                "error_message", "Unknown validation error"
-            )
-            summary = f"Validation failed: {error_message}"
-            artifacts["validation_report"] = f"Valid: False. Error: {error_message}"
-            artifacts["validation_error"] = error_message
+            summary = f"Validation failed: {validation_details['error_message']}"
+
+            if validation_details.get("overlaps_check"):
+                artifacts["overlaps_check"] = "\n".join(
+                    validation_details["overlaps_check"]
+                )
+            if validation_details.get("perimeter_check"):
+                artifacts["perimeter_check"] = "\n".join(validation_details["perimeter_check"])
             artifacts["failure_stage"] = "geometric_validation"
-        else:
-            summary = f"Evaluation successful. The packing is valid with a total radii sum of {sum_radii:.6f}."
-            artifacts["validation_report"] = (
-                f"Valid: True. Packing verified successfully. Width={width:.4f}, Height={height:.4f}."
-            )
-            artifacts["packing_summary"] = (
-                f"Sum of radii: {sum_radii:.6f}/{TARGET_VALUE} = {target_ratio:.4f}"
-            )
 
             # Add successful packing stats for good solutions
-            if target_ratio > 0.95:  # Near-optimal solutions
+            if is_valid and target_ratio > 0.95:  # Near-optimal solutions
                 artifacts["stdout"] = (
                     f"Excellent packing! Achieved {target_ratio:.1%} of target value"
                 )
-                min_radius = float(np.min(radii))
-                max_radius = float(np.max(radii))
-                avg_radius = float(np.mean(radii))
+                min_radius = float(validation_details['min_radius'])
+                max_radius = float(validation_details['max_radius'])
+                avg_radius = float(validation_details['avg_radius'])
                 artifacts["radius_stats"] = (
                     f"Min: {min_radius:.6f}, Max: {max_radius:.6f}, Avg: {avg_radius:.6f}"
                 )
@@ -535,11 +365,7 @@ def evaluate(program_path):
         }
 
 
-"""
 if __name__ == "__main__":
-    file = "./initial_program.py"
-    res = evaluate_stage1(file)
+    file = "./best_solution.py"
+    res = evaluate(file)
     print(f"{res}")
-    res = evaluate_stage2(file)
-    print(f"{res}")
-"""
