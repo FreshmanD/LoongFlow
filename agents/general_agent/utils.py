@@ -61,9 +61,14 @@ def load_skills(skill_names: List[str], work_dir: str) -> None:
     for skill_name in skill_names:
         skill_src = base_skills_dir / skill_name
         if not skill_src.exists():
+            # List both real directories and valid symlinks
+            available = [
+                d.name for d in base_skills_dir.iterdir()
+                if d.is_dir() or (d.is_symlink() and d.resolve().is_dir())
+            ]
             raise FileNotFoundError(
                 f"Skill '{skill_name}' not found in global skills directory: {base_skills_dir}. "
-                f"Available skills: {[d.name for d in base_skills_dir.iterdir() if d.is_dir()]}"
+                f"Available skills: {available}"
             )
 
         skill_dst = target_skills_dir / skill_name
