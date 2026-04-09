@@ -417,7 +417,7 @@ import itertools
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-def run_packing(num_circles: int):
+def run_packing():
     """Run the circle packing constructor for n=21"""
     circles = construct_packing()
     return circles
